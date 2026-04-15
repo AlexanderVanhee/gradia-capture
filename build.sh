@@ -17,6 +17,7 @@ gnome-extensions pack src \
     --extra-source="settings.js" \
     --extra-source="screenshotStore.js" \
     --extra-source="resolutionOverlay.js" \
+    --extra-source="screenshotToast.js" \
     --extra-source="tools.js" \
     --extra-source="../icons" \
     --schema="../schemas/org.gnome.shell.extensions.gradia-companion.gschema.xml"

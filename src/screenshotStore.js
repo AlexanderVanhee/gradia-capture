@@ -6,23 +6,7 @@ import Shell from 'gi://Shell';
 import St from 'gi://St';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import * as MessageTray from 'resource:///org/gnome/shell/ui/messageTray.js';
-
-let screenshotNotificationSource = null;
-
-function getScreenshotNotificationSource() {
-    if (!screenshotNotificationSource) {
-        screenshotNotificationSource = new MessageTray.Source({
-            title: 'Screen Capture',
-            iconName: 'screenshooter-symbolic',
-        });
-        screenshotNotificationSource.connect('destroy', () => {
-            screenshotNotificationSource = null;
-        });
-        Main.messageTray.add(screenshotNotificationSource);
-    }
-    return screenshotNotificationSource;
-}
+import {showScreenshotToast} from './screenshotToast.js';
 
 function* _suffixes() {
     yield '';
@@ -99,32 +83,7 @@ export function storeScreenshot(bytes, pixbuf) {
         pixbuf.rowstride
     );
 
-    const source = getScreenshotNotificationSource();
-    const notification = new MessageTray.Notification({
-        source,
-        title: 'Screenshot captured',
-        body: 'You can paste the image from the clipboard',
-        datetime: time,
-        gicon: content,
-        isTransient: true,
-    });
-
-    if (!disableSaveToDisk && file) {
-        notification.addAction('Show in Files', () => {
-            const app = Gio.app_info_get_default_for_type('inode/directory', false);
-            if (app === null)
-                return;
-            app.launch([file], global.create_app_launch_context(0, -1));
-        });
-        notification.connect('activated', () => {
-            Gio.app_info_launch_default_for_uri(
-                file.get_uri(), global.create_app_launch_context(0, -1));
-            Main.overview.hide();
-            Main.panel.closeCalendar();
-        });
-    }
-
-    source.addNotification(notification);
+    showScreenshotToast(file ?? null, content, pixbuf.width, pixbuf.height);
     return file;
 }
 

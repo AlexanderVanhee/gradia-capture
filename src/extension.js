@@ -405,49 +405,58 @@ export default class GradiaCompanion extends Extension {
         Main.screenshotUI._saveScreenshot = async function () {
             const ui = Main.screenshotUI;
             self._commitTextEntry();
-            const hasStrokes = self._canvases.some(c => c.hasStrokes());
-            if (!hasStrokes)
-                return self._originalSaveScreenshot();
 
-            const strokeData = self._buildStrokeData();
-            let file = null;
+            if (!ui._selectionButton.checked && !ui._screenButton.checked && !ui._windowButton.checked)
+                return;
+
+            const hasStrokes = self._canvases.some(c => c.hasStrokes());
+            const strokeData = hasStrokes ? self._buildStrokeData() : null;
+            const compositeFn = hasStrokes
+                ? (bytes, pixbuf) => self._compositeStrokesOntoPixbuf(bytes, pixbuf, strokeData)
+                : null;
+
+            let texture, geometry, scale, cursor;
 
             if (ui._selectionButton.checked || ui._screenButton.checked) {
                 const content = ui._stageScreenshot.get_content();
                 if (!content)
                     return;
 
-                const texture = content.get_texture();
-                const geometry = ui._getSelectedGeometry(true);
-                let cursorTexture = ui._cursor.content?.get_texture();
-                if (!ui._cursor.visible)
-                    cursorTexture = null;
-
-                const cursor = {
-                    texture: cursorTexture ?? null,
+                texture = content.get_texture();
+                geometry = ui._getSelectedGeometry(true);
+                scale = ui._scale;
+                cursor = {
+                    texture: ui._cursor.visible ? ui._cursor.content?.get_texture() ?? null : null,
                     x: ui._cursor.x * ui._scale,
                     y: ui._cursor.y * ui._scale,
                     scale: ui._cursorScale,
                 };
+            } else {
+                const window = ui._windowSelectors
+                    .flatMap(s => s.windows())
+                    .find(w => w.checked);
+                if (!window)
+                    return;
 
-                file = await captureAndStoreScreenshot(
-                    texture,
-                    geometry,
-                    ui._scale,
-                    cursor,
-                    (bytes, pixbuf) => self._compositeStrokesOntoPixbuf(bytes, pixbuf, strokeData)
-                );
-            } else if (ui._windowButton.checked) {
-                return self._originalSaveScreenshot();
+                const content = window.windowContent;
+                if (!content)
+                    return;
+
+                texture = content.get_texture();
+                geometry = null;
+                scale = window.bufferScale;
+                cursor = {
+                    texture: ui._cursor.visible ? window.getCursorTexture()?.get_texture() ?? null : null,
+                    x: window.cursorPoint.x * window.bufferScale,
+                    y: window.cursorPoint.y * window.bufferScale,
+                    scale: ui._cursorScale,
+                };
             }
 
+            const file = await captureAndStoreScreenshot(texture, geometry, scale, cursor, compositeFn);
             if (file)
                 ui.emit('screenshot-taken', file);
         };
-
-        this._closedId = Main.screenshotUI.connect('closed', () => {
-            self._removeUI();
-        });
     }
 
     disable() {
@@ -528,7 +537,7 @@ export default class GradiaCompanion extends Extension {
 
         if (!this._trashButton) {
             this._trashButton = new St.Button({
-                style_class: 'gradia-selection-trash',
+                style_class: 'gradia-selection-trash gradia-circle-button',
                 child: new St.Icon({
                     icon_name: 'user-trash-symbolic',
                     style: 'icon-size: 16px;',

@@ -68,14 +68,17 @@
 }
 
 .gradia-selection-trash {
+    background-color: #3a3a3d;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.gradia-circle-button {
     min-width: 32px;
     max-width: 32px;
     min-height: 32px;
     max-height: 32px;
     border-radius: 9999px;
     padding: 0;
-    background-color: #3a3a3d;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .gradia-selection-trash:hover {
@@ -94,4 +97,24 @@
     font-size: 13px;
     font-weight: 600;
     padding: 6px 12px;
+}
+
+.gradia-pill-button {
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 6px 6px;
+    border: none;
+    min-width: 50px;
+}
+
+.gradia-osd-button {
+    background-color: rgba(0, 0, 0, 0.60);
+    color: #ffffff;
+}
+.gradia-osd-button:hover {
+    background-color: rgba(30, 30, 30, 0.60);
+}
+.gradia-osd-button:active {
+    background-color: rgba(50, 50, 50, 0.60);
 }
