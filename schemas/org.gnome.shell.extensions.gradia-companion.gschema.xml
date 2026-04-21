@@ -9,5 +9,9 @@
       <default>'png'</default>
       <summary>File format for saved screenshots</summary>
     </key>
+    <key name="screenshot-noise" type="b">
+      <default>true</default>
+      <summary>Play shutter sound on screenshot</summary>
+    </key>
   </schema>
 </schemalist>

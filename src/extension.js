@@ -452,10 +452,11 @@ export default class GradiaCompanion extends Extension {
         const shouldCopy = !ocr;
         const shouldSave = !copyOnly;
         const format = (this._portalMode || ocr) ? 'png' : this._settings.get_string('screenshot-format');
+        const noise = this._settings.get_boolean('screenshot-noise');
 
         const _capture = (texture, geometry, scale, cursor, compositeFn) => {
             const capturePromise = captureAndStoreScreenshot(
-                texture, geometry, scale, cursor, compositeFn, { copy: shouldCopy, save: shouldSave, format }
+                texture, geometry, scale, cursor, compositeFn, { copy: shouldCopy, save: shouldSave, format, noise }
             );
             // We have to await in portal mode to prevent a race condition where
             // the overlay gets closed before 'screenshot-taken' gets emitted, so the portal doesn't fail.

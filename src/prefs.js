@@ -120,7 +120,20 @@ class AboutPage extends Adw.PreferencesPage {
                 this._settings.set_string('screenshot-format', selected.id);
         });
 
+        const noiseRow = new Adw.SwitchRow({
+            title: 'Screenshot Noise',
+            subtitle: 'Play a shutter sound when taking a screenshot',
+        });
+
+        this._settings.bind(
+            'screenshot-noise',
+            noiseRow,
+            'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+
         group.add(formatRow);
+        group.add(noiseRow);
         this.add(group);
     }
 });
