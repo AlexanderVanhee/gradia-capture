@@ -10,8 +10,7 @@ export class ResolutionOverlay {
     constructor(primaryBin) {
         this._primaryBin = primaryBin;
         this._visible = false;
-        this._motionId = null;
-
+        this._timeline = null;
         this._label = new St.Label({
             style_class: 'gradia-resolution-label',
             opacity: 0,
@@ -22,27 +21,34 @@ export class ResolutionOverlay {
 
     onDragStarted() {
         this._fadeIn();
-        const selector = Main.screenshotUI?._areaSelector;
-        if (selector) {
-            this._motionId = selector.connect('motion-event', () => {
-                this._update();
-                return Clutter.EVENT_PROPAGATE;
-            });
-        }
+        this._startPolling();
         this._update();
     }
 
     onDragEnded() {
-        this._disconnectMotion();
+        this._stopPolling();
         this._fadeOut();
     }
 
-    _disconnectMotion() {
-        const selector = Main.screenshotUI?._areaSelector;
-        if (selector && this._motionId) {
-            selector.disconnect(this._motionId);
-            this._motionId = null;
-        }
+    _startPolling() {
+        if (this._timeline)
+            return;
+        this._timeline = new Clutter.Timeline({
+            actor: this._primaryBin,
+            repeat_count: -1,
+            duration: 100,
+        });
+        this._newFrameId = this._timeline.connect('new-frame', () => this._update());
+        this._timeline.start();
+    }
+
+    _stopPolling() {
+        if (!this._timeline)
+            return;
+        this._timeline.disconnect(this._newFrameId);
+        this._timeline.stop();
+        this._timeline = null;
+        this._newFrameId = null;
     }
 
     _getMaxScale() {
@@ -120,7 +126,7 @@ export class ResolutionOverlay {
     }
 
     destroy() {
-        this._disconnectMotion();
+        this._stopPolling();
         if (this._label) {
             this._label.destroy();
             this._label = null;
