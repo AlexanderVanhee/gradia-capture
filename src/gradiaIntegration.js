@@ -4,11 +4,17 @@ import GLib from 'gi://GLib';
 import Shell from 'gi://Shell';
 import St from 'gi://St';
 
-
 import { attachTooltip } from './tooltip.js';
+import { GradiaSettings } from './settings.js';
 
-const GRADIA_FLATPAK_ID = 'be.alexandervanhee.gradia';
+export const GRADIA_FLATPAK_ID = 'be.alexandervanhee.gradia.Devel';
 const GRADIA_DESKTOP_ID = `${GRADIA_FLATPAK_ID}.desktop`;
+const GRADIA_KEYFILE_PATH = GLib.build_filenamev([
+    GLib.get_home_dir(),
+    '.var', 'app', GRADIA_FLATPAK_ID,
+    'config', 'glib-2.0', 'settings', 'keyfile',
+]);
+
 
 export function isGradiaFlatpakInstalled() {
     const appInfo = Shell.AppSystem.get_default().lookup_app(GRADIA_DESKTOP_ID)?.get_app_info();
@@ -18,18 +24,18 @@ export function isGradiaFlatpakInstalled() {
 }
 
 export function launchGradiaForScreenshot(file) {
-    if (!file)
-      return;
-
-    const appInfo = Shell.AppSystem.get_default().lookup_app(GRADIA_DESKTOP_ID)?.get_app_info();
-    if (!appInfo)
-      return;
-
-    try {
-        Gio.Subprocess.new(['gio', 'launch', appInfo.get_filename(), file.get_uri()], Gio.SubprocessFlags.NONE);
-    } catch (e) {
-        console.error(`Failed to spawn Gradia: ${e.message}`);
-    }
+    if (!file) return;
+    const objectPath = '/' + GRADIA_FLATPAK_ID.replaceAll('.', '/');
+    Gio.DBus.session.call(
+        GRADIA_FLATPAK_ID, objectPath,
+        'org.freedesktop.Application', 'ActivateAction',
+        new GLib.Variant('(sava{sv})', [
+            'open',
+            [new GLib.Variant('s', file.get_path())],
+            {},
+        ]),
+        null, Gio.DBusCallFlags.NONE, -1, null, null
+    );
 }
 
 export function openContainingFolder(file) {
@@ -45,6 +51,50 @@ export function openContainingFolder(file) {
         null,
         null
     );
+}
+
+export function readGradiaExportSettings() {
+    const fallback = { valid: false, providerName: null, customExportCommand: null, showExportConfirmDialog: true };
+
+    if (!Gio.File.new_for_path(GRADIA_KEYFILE_PATH).query_exists(null))
+        return fallback;
+
+    const keyfile = new GLib.KeyFile();
+    try {
+        if (!keyfile.load_from_file(GRADIA_KEYFILE_PATH, GLib.KeyFileFlags.NONE))
+            return fallback;
+    } catch (e) {
+        return fallback;
+    }
+
+    const group = 'be/alexandervanhee/gradia';
+    if (!keyfile.has_group(group))
+        return fallback;
+
+    const keys = new Set(keyfile.get_keys(group)[0] ?? []);
+
+    const unescape = (s) => s.replace(/\\(.)/g, (_, c) =>
+        c === 'n' ? '\n' : c === 't' ? '\t' : c === 'r' ? '\r' : c);
+
+    const get = (key) => {
+        if (!keys.has(key)) return null;
+        try {
+            return unescape(keyfile.get_value(group, key).replace(/^['"]|['"]$/g, ''));
+        } catch (e) {
+            return null;
+        }
+    };
+
+    const providerName = get('provider-name');
+    const customExportCommand = get('custom-export-command');
+    const rawBool = get('show-export-confirm-dialog');
+
+    return {
+        valid: providerName !== null && customExportCommand !== null,
+        providerName,
+        customExportCommand,
+        showExportConfirmDialog: rawBool === 'false' ? false : true,
+    };
 }
 
 export function openFileInDefaultApp(file) {
@@ -68,6 +118,55 @@ export function launchGradiaOcrForFile(file) {
     } catch (e) {
         console.error(`Failed to spawn Gradia: ${e.message}`);
     }
+}
+
+export function launchGradiaPin(file) {
+    if (!file?.get_path()) return;
+
+    const stickPinned = GradiaSettings.getInstance()?.settings.get_boolean('pin-stick') ?? false;
+    const objectPath = '/' + GRADIA_FLATPAK_ID.replaceAll('.', '/');
+
+
+    const getGradiaWindows = () =>
+        global.get_window_actors()
+            .map(a => a.meta_window)
+            .filter(w => w.get_wm_class()?.startsWith(GRADIA_FLATPAK_ID));
+
+    const before = new Set(getGradiaWindows().map(w => w.get_id()));
+
+    Gio.DBus.session.call(
+        GRADIA_FLATPAK_ID,
+        objectPath,
+        'org.freedesktop.Application',
+        'ActivateAction',
+        new GLib.Variant('(sava{sv})', [
+            'pin',
+            [new GLib.Variant('s', file.get_path())],
+            {},
+        ]),
+        null, Gio.DBusCallFlags.NONE, -1, null,
+        (conn, res) => {
+            try {
+                conn.call_finish(res);
+            } catch (e) {
+                console.error(`[GradiaPin] D-Bus call failed: ${e.message}`);
+                return;
+            }
+
+            let tries = 0;
+            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
+
+                getGradiaWindows()
+                    .filter(w => !before.has(w.get_id()))
+                    .forEach(w => {
+                        w.make_above();
+                        if (stickPinned)
+                          w.stick();
+                    });
+                return ++tries < 20 ? GLib.SOURCE_CONTINUE : GLib.SOURCE_REMOVE;
+            });
+        }
+    );
 }
 
 export function createOcrButton(onClick) {

@@ -2,9 +2,20 @@ import GLib from 'gi://GLib';
 
 const SCHEMA_ID = 'org.gnome.shell.extensions.gradia-companion';
 
+let _instance = null;
+
 export class GradiaSettings {
     constructor(extension) {
         this._settings = extension.getSettings(SCHEMA_ID);
+        _instance = this;
+    }
+
+    static getInstance() {
+        return _instance;
+    }
+
+    get settings() {
+        return this._settings;
     }
 
     loadToolSettings() {
@@ -60,5 +71,7 @@ export class GradiaSettings {
 
     destroy() {
         this._settings = null;
+        if (_instance === this)
+            _instance = null;
     }
 }

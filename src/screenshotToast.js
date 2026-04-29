@@ -3,7 +3,8 @@ import GLib from 'gi://GLib';
 import St from 'gi://St';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import { isGradiaFlatpakInstalled, launchGradiaForScreenshot, openContainingFolder, openFileInDefaultApp } from './gradiaIntegration.js';
+import { isGradiaFlatpakInstalled, launchGradiaForScreenshot, launchGradiaPin, openContainingFolder, openFileInDefaultApp, readGradiaExportSettings } from './gradiaIntegration.js';
+import { runExport } from './exportRunner.js';
 
 const TOAST_WIDTH = 250;
 const TOAST_MARGIN = 18;
@@ -91,6 +92,29 @@ class ScreenshotToast {
         const btnMargin = 10;
 
         if (file && isGradiaFlatpakInstalled()) {
+            this._pinButton = new St.Button({
+                style_class: 'gradia-circle-button gradia-selection-trash',
+                child: new St.Icon({
+                    icon_name: 'view-pin-symbolic',
+                    style: 'icon-size: 16px;',
+                }),
+                reactive: true,
+            });
+
+            this._contentLayer.add_child(this._pinButton);
+
+            this._signalIds.push([this._pinButton, this._pinButton.connect('realize', () => {
+                this._pinButton.set_size(CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE);
+                this._pinButton.set_position(btnMargin, btnMargin);
+            })]);
+
+            this._signalIds.push([this._pinButton, this._pinButton.connect('clicked', () => {
+                launchGradiaPin(file);
+                this.destroy();
+            })]);
+        }
+
+        if (file && isGradiaFlatpakInstalled()) {
             this._editButton = new St.Button({
                 style_class: 'gradia-circle-button gradia-selection-trash',
                 child: new St.Icon({
@@ -109,6 +133,31 @@ class ScreenshotToast {
 
             this._signalIds.push([this._editButton, this._editButton.connect('clicked', () => {
                 launchGradiaForScreenshot(file);
+                this.destroy();
+            })]);
+        }
+
+        const exportSettings = file && isGradiaFlatpakInstalled() ? readGradiaExportSettings() : null;
+
+        if (exportSettings?.valid) {
+            this._exportButton = new St.Button({
+                style_class: 'gradia-circle-button gradia-selection-trash',
+                child: new St.Icon({
+                    icon_name: 'send-to-symbolic',
+                    style: 'icon-size: 16px;',
+                }),
+                reactive: true,
+            });
+
+            this._contentLayer.add_child(this._exportButton);
+
+            this._signalIds.push([this._exportButton, this._exportButton.connect('realize', () => {
+                this._exportButton.set_size(CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE);
+                this._exportButton.set_position(btnMargin + CLOSE_BUTTON_SIZE + btnMargin, thumbH - CLOSE_BUTTON_SIZE - btnMargin);
+            })]);
+
+            this._signalIds.push([this._exportButton, this._exportButton.connect('clicked', () => {
+                runExport(file, exportSettings);
                 this.destroy();
             })]);
         }

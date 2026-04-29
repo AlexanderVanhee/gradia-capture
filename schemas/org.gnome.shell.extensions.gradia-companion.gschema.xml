@@ -21,5 +21,9 @@
       <default>true</default>
       <summary>Composite transient windows when capturing a window screenshot</summary>
     </key>
+    <key name="pin-stick" type="b">
+      <default>true</default>
+      <summary>Show pinned windows on all workspaces</summary>
+    </key>
   </schema>
 </schemalist>

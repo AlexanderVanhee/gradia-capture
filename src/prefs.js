@@ -34,6 +34,7 @@ const AboutPage = GObject.registerClass(
             this._buildDonationGroup();
             this._buildTextRecognitionGroup();
             this._buildScreenshotGroup();
+            this._buildPinGroup();
         }
 
         _setupCss() {
@@ -198,6 +199,20 @@ const AboutPage = GObject.registerClass(
             group.add(clearSelectionRow);
             group.add(compositeWindowRow);
             group.add(soundRow);
+            this.add(group);
+        }
+
+        _buildPinGroup() {
+            const group = new Adw.PreferencesGroup({ title: 'Pin' });
+
+            const pinStickRow = new Adw.SwitchRow({
+                title: 'Pin on All Workspaces',
+                subtitle: 'Move pinned screenshots between workspaces automatically',
+            });
+
+            this._settings.bind('pin-stick', pinStickRow, 'active', Gio.SettingsBindFlags.DEFAULT);
+
+            group.add(pinStickRow);
             this.add(group);
         }
     });
