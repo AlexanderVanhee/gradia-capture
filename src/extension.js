@@ -212,7 +212,7 @@ const DrawingCanvas = GObject.registerClass(
 
             const tool = getToolDef(this._toolId);
 
-            if (tool?.id === 'freehand') {
+            if (tool?.id === 'freehand' || tool?.id === 'pixelate') {
                 this._currentStroke.stagePoints.push({ x: stageX, y: stageY });
             } else {
                 if (this._currentStroke.stagePoints.length === 1)
