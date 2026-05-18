@@ -6,6 +6,8 @@ import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
 import St from 'gi://St';
 
+import * as IBusManager from 'resource:///org/gnome/shell/misc/ibusManager.js';
+
 import { Toolbar, TRASH_BUTTON_RADIUS } from './topBar.js';
 import { TOOLS, TOOL_SHORTCUTS } from './tools.js';
 import { GradiaSettings } from './settings.js';
@@ -390,6 +392,7 @@ export default class GradiaCompanion extends Extension {
         this._bins = [];
         this._textEntry = null;
         this._pendingTextStroke = null;
+        this._originalUpdateVisibility = null;
 
         this._dragToolActive = false;
         this._dragToolStartX = 0;
@@ -905,10 +908,39 @@ export default class GradiaCompanion extends Extension {
         });
 
         entry.grab_key_focus();
+        this._patchIbusCandidatePopup();
+    }
+
+    _patchIbusCandidatePopup() {
+        const ibusMgr = IBusManager.getIBusManager();
+        const popup = ibusMgr?._candidatePopup;
+        if (!popup || this._originalUpdateVisibility)
+            return;
+
+        this._originalUpdateVisibility = popup._updateVisibility;
+        const screenshotGroup = Main.layoutManager.screenshotUIGroup;
+
+        const boundOriginal = popup._updateVisibility.bind(popup);
+        popup._updateVisibility = (...args) => {
+            boundOriginal(...args);
+            const parent = popup.get_parent();
+            if (parent && screenshotGroup && screenshotGroup.get_parent() === parent)
+                parent.set_child_above_sibling(popup, screenshotGroup);
+        };
+    }
+
+    _unpatchIbusCandidatePopup() {
+        const ibusMgr = IBusManager.getIBusManager();
+        const popup = ibusMgr?._candidatePopup;
+        if (popup)
+            delete popup._updateVisibility;
+
+        this._originalUpdateVisibility = null;
     }
 
     _teardownTextEntry() {
         this._committingText = true;
+        this._unpatchIbusCandidatePopup();
         this._textEntry.destroy();
         this._textEntry = null;
         this._pendingTextStroke = null;
@@ -1379,6 +1411,7 @@ export default class GradiaCompanion extends Extension {
 
     _removeUI() {
         this._cancelTextEntry();
+        this._unpatchIbusCandidatePopup();
         this._destroyTrashButton();
 
         if (this._idleSourceId) {
