@@ -21,5 +21,10 @@
       <default>true</default>
       <summary>Composite transient windows when capturing a window screenshot</summary>
     </key>
+    <key name="language" type="s">
+      <default>'system'</default>
+      <summary>Interface language override</summary>
+      <description>Force the extension interface into a specific language. Set to 'system' to follow the system locale, or use a language code such as 'zh_CN' or 'en'.</description>
+    </key>
   </schema>
 </schemalist>

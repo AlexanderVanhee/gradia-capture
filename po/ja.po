@@ -1,0 +1,337 @@
+# Gradia Capture 日本語翻訳
+# Copyright (C) 2026 Alexander Vanhee
+# This file is distributed under the same license as the Gradia Capture package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gradia-capture\n"
+"Report-Msgid-Bugs-To: https://github.com/AlexanderVanhee/gradia-companion/issues\n"
+"POT-Creation-Date: 2026-08-05 00:00+0000\n"
+"PO-Revision-Date: 2026-08-05 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Japanese <ja@li.org>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: src/metadata.json
+msgid "Gradia Capture"
+msgstr "Gradia キャプチャ"
+
+#: src/metadata.json
+msgid ""
+"Enhances the built-in screenshot tool with annotation features.\n"
+"Clipboard data may be overwritten with the annotated screenshot."
+msgstr ""
+"内蔵のスクリーンショットツールに注釈機能を追加します。\n"
+"注釈付きのスクリーンショットでクリップボードのデータが上書きされる場合があります。"
+
+#: src/prefs.js
+msgid "Preferences"
+msgstr "設定"
+
+#: src/prefs.js
+msgid "General"
+msgstr "一般"
+
+#: src/prefs.js
+msgid "Language"
+msgstr "言語"
+
+#: src/prefs.js
+msgid "Choose the language used by the extension interface"
+msgstr "拡張機能のインターフェースで使用する言語を選択します"
+
+#: src/i18n.js
+msgid "System Default"
+msgstr "システム既定"
+
+#: src/prefs.js
+msgid "Support This Extension"
+msgstr "この拡張機能を支援する"
+
+#: src/prefs.js
+msgid "If you enjoy my work, consider donating!"
+msgstr "この作品を気に入っていただけたら、寄付をご検討ください！"
+
+#: src/prefs.js
+msgid "Donate ♥"
+msgstr "寄付 ♥"
+
+#: src/prefs.js
+msgid "Text Recognition"
+msgstr "テキスト認識"
+
+#: src/prefs.js
+msgid "Gradia Installed"
+msgstr "Gradia インストール済み"
+
+#: src/prefs.js
+msgid "OCR text extraction is available in the screenshot UI"
+msgstr "スクリーンショット UI で OCR テキスト抽出を使用できます"
+
+#: src/prefs.js
+msgid "Get the Gradia Flatpak"
+msgstr "Gradia Flatpak を入手"
+
+#: src/prefs.js
+msgid "Install the app via Flathub to enable the OCR text extraction feature"
+msgstr "Flathub からアプリをインストールして OCR テキスト抽出機能を有効にします"
+
+#: src/prefs.js
+msgid "Screenshot"
+msgstr "スクリーンショット"
+
+#: src/prefs.js
+msgid "File Format"
+msgstr "ファイル形式"
+
+#: src/prefs.js
+msgid "Changing this may slow down saving"
+msgstr "変更すると保存が遅くなる場合があります"
+
+#: src/prefs.js
+msgid "Disable Initial Selection"
+msgstr "初期選択を無効にする"
+
+#: src/prefs.js
+msgid "Hide the default or last pre-selected area when the overlay opens"
+msgstr "オーバーレイを開いたときに、既定または最後に選択された領域を非表示にします"
+
+#: src/prefs.js
+msgid "Include Parent Windows"
+msgstr "親ウィンドウを含める"
+
+#: src/prefs.js
+msgid "Also capture parent windows when a transient window is selected"
+msgstr "一時的なウィンドウが選択されたときに親ウィンドウもキャプチャします"
+
+#: src/prefs.js
+msgid "Sound"
+msgstr "サウンド"
+
+#: src/prefs.js
+msgid "Play a shutter sound effect on capture"
+msgstr "キャプチャ時にシャッター音を再生します"
+
+#: src/prefs.js
+msgid "Shortcuts"
+msgstr "ショートカット"
+
+#: src/prefs.js
+msgid "Screenshot Mode"
+msgstr "スクリーンショットモード"
+
+#: src/prefs.js
+msgid "Take Screenshot / Capture"
+msgstr "スクリーンショット / キャプチャ"
+
+#: src/prefs.js
+msgid "Copy to Clipboard"
+msgstr "クリップボードにコピー"
+
+#: src/prefs.js
+msgid "Save As…"
+msgstr "名前を付けて保存…"
+
+#: src/prefs.js
+msgid "Extract Text (OCR)"
+msgstr "テキスト抽出 (OCR)"
+
+#: src/prefs.js
+msgid "Area Selection"
+msgstr "領域の選択"
+
+#: src/prefs.js
+msgid "Screen Selection"
+msgstr "画面の選択"
+
+#: src/prefs.js
+msgid "Window Selection"
+msgstr "ウィンドウの選択"
+
+#: src/prefs.js
+msgid "Toggle Pointer Visibility"
+msgstr "ポインターの表示切り替え"
+
+#: src/prefs.js
+msgid "Toggle Screen Recording"
+msgstr "画面録画の切り替え"
+
+#: src/prefs.js
+msgid "Annotations"
+msgstr "注釈"
+
+#: src/prefs.js
+msgid "Undo Last Stroke"
+msgstr "最後のストロークを元に戻す"
+
+#: src/prefs.js
+msgid "Delete Selected"
+msgstr "選択を削除"
+
+#: src/prefs.js
+msgid "Crop Tool"
+msgstr "切り抜きツール"
+
+#: src/prefs.js
+msgid "Drag Tool"
+msgstr "ドラッグツール"
+
+#: src/prefs.js
+msgid "Freehand Tool"
+msgstr "フリーハンドツール"
+
+#: src/prefs.js
+msgid "Rectangle Tool"
+msgstr "矩形ツール"
+
+#: src/prefs.js
+msgid "Solid Rectangle Tool"
+msgstr "塗りつぶし矩形ツール"
+
+#: src/prefs.js
+msgid "Highlighter Tool"
+msgstr "蛍光ペンツール"
+
+#: src/prefs.js
+msgid "Arrow Tool"
+msgstr "矢印ツール"
+
+#: src/prefs.js
+msgid "Text Tool"
+msgstr "テキストツール"
+
+#: src/prefs.js
+msgid "Number Stamp Tool"
+msgstr "番号スタンプツール"
+
+#: src/prefs.js
+msgid "System Keybindings"
+msgstr "システムのキーバインド"
+
+#: src/prefs.js
+msgid "Configurable in Settings → Keyboard."
+msgstr "設定 → キーボード で設定できます。"
+
+#: src/prefs.js
+msgid "Take a screenshot interactively"
+msgstr "対話的にスクリーンショットを撮る"
+
+#: src/prefs.js
+msgid "Take a screencast interactively"
+msgstr "対話的に画面録画を撮る"
+
+#: src/prefs.js
+msgid "Take a screenshot of a window"
+msgstr "ウィンドウのスクリーンショットを撮る"
+
+#: src/prefs.js
+msgid "Take a screenshot"
+msgstr "スクリーンショットを撮る"
+
+#: src/tools.js
+msgid "Crop"
+msgstr "切り抜き"
+
+#: src/tools.js
+msgid "Drag"
+msgstr "ドラッグ"
+
+#: src/tools.js
+msgid "Freehand"
+msgstr "フリーハンド"
+
+#: src/tools.js
+msgid "Rectangle"
+msgstr "矩形"
+
+#: src/tools.js
+msgid "Solid Rectangle"
+msgstr "塗りつぶし矩形"
+
+#: src/tools.js
+msgid "Highlighter"
+msgstr "蛍光ペン"
+
+#: src/tools.js
+msgid "Arrow"
+msgstr "矢印"
+
+#: src/tools.js
+msgid "Text"
+msgstr "テキスト"
+
+#: src/tools.js
+msgid "Number Stamp"
+msgstr "番号スタンプ"
+
+#: src/topBar.js
+msgid "White"
+msgstr "白"
+
+#: src/topBar.js
+msgid "Black"
+msgstr "黒"
+
+#: src/topBar.js
+msgid "Red"
+msgstr "赤"
+
+#: src/topBar.js
+msgid "Orange"
+msgstr "オレンジ"
+
+#: src/topBar.js
+msgid "Yellow"
+msgstr "黄"
+
+#: src/topBar.js
+msgid "Green"
+msgstr "緑"
+
+#: src/topBar.js
+msgid "Blue"
+msgstr "青"
+
+#: src/topBar.js
+msgid "Purple"
+msgstr "紫"
+
+#: src/topBar.js
+msgid "Undo"
+msgstr "元に戻す"
+
+#: src/topBar.js
+msgid "Clear all"
+msgstr "すべてクリア"
+
+#: src/topBar.js
+msgid "Pick Display"
+msgstr "ディスプレイを選択"
+
+#: src/gradiaIntegration.js
+msgid "Extract Text"
+msgstr "テキスト抽出"
+
+#: src/gradiaIntegration.js
+msgid "Settings"
+msgstr "設定"
+
+#: src/screenshotToast.js
+msgid "Copied!"
+msgstr "コピーしました！"
+
+#: src/extension.js
+msgid "Drag to Make a Selection"
+msgstr "ドラッグして選択範囲を指定"
+
+#: src/screenshotStore.js
+msgid "Save Screenshot As…"
+msgstr "スクリーンショットを別名で保存…"
+
+#: src/screenshotStore.js
+msgid "Screenshot taken"
+msgstr "スクリーンショットを保存しました"

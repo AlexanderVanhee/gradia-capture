@@ -1,13 +1,12 @@
 {
-  "name": "Gradia Capture",
-  "description": "Enhances the built-in screenshot tool with annotation features.\nClipboard data may be overwritten with the annotated screenshot.",
-  "uuid": "gradia-integration@alexandervanhee.github.io",
-  "url": "https://github.com/AlexanderVanhee/gradia-companion",
-  "donations": {
-     "kofi": "alexandervanhee"
-  },
-  "settings-schema": "org.gnome.shell.extensions.gradia-companion",
-  "shell-version": [
-    "49","50"
-  ]
+	"name": "Gradia Capture",
+	"description": "Enhances the built-in screenshot tool with annotation features.\nClipboard data may be overwritten with the annotated screenshot.",
+	"uuid": "gradia-integration@alexandervanhee.github.io",
+	"url": "https://github.com/AlexanderVanhee/gradia-companion",
+	"gettext-domain": "gradia-capture",
+	"donations": {
+		"kofi": "alexandervanhee"
+	},
+	"settings-schema": "org.gnome.shell.extensions.gradia-companion",
+	"shell-version": ["49", "50"]
 }
