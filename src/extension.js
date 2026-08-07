@@ -432,8 +432,18 @@ export default class GradiaCompanion extends Extension {
 
 		this._selectionClearer = new SelectionClearer();
 
+		this._panelHidden = false;
+		this._panelReactiveStates = null;
+		this._lastSelectionMode = false;
+		this._selectionDragged = false;
+
 		Main.screenshotUI.open = async function (mode = 0, ...rest) {
 			self._portalMode = mode === 2;
+			self._selectionDragged = false;
+			// Forget any previously remembered selection before the overlay is
+			// shown, so the user always has to draw a fresh area themselves.
+			if (Main.screenshotUI?._areaSelector)
+				self._selectionClearer.patch(Main.screenshotUI._areaSelector);
 			const result = await self._originalOpen(mode, ...rest);
 			self._ensureUI();
 			return result;
@@ -1119,6 +1129,9 @@ export default class GradiaCompanion extends Extension {
 			this._hideTrashButton();
 		}
 
+		// 回到裁剪工具时，重新显示"拖动以选择区域"的提示
+		if (id === "select") this._selectionDragged = false;
+
 		const drawing = this._isDrawingTool(id);
 		const dragging = id === "drag";
 
@@ -1127,7 +1140,30 @@ export default class GradiaCompanion extends Extension {
 		for (const overlay of this._overlays)
 			overlay.reactive = drawing || dragging;
 
+		this._updateSelectionHint();
 		this._updateAreaSelectorState(id);
+		this._updatePanelAutoHide();
+	}
+
+	_updateSelectionHint() {
+		if (!this._selectionHintLabel) return;
+
+		const selectionMode =
+			Main.screenshotUI?._selectionButton?.checked ?? false;
+		const recordingMode = this._isRecordingMode();
+		const tool = this._toolbar?.selectedTool ?? "select";
+		const show =
+			selectionMode &&
+			!recordingMode &&
+			tool === "select" &&
+			!this._selectionDragged;
+
+		if (show) {
+			this._selectionHintLabel.remove_all_transitions();
+			this._selectionHintLabel.set({ visible: true, opacity: 255 });
+		} else {
+			this._selectionHintLabel.hide();
+		}
 	}
 
 	_updateAreaSelectorState(id) {
@@ -1191,9 +1227,17 @@ export default class GradiaCompanion extends Extension {
 			!windowMode && !recordingMode && !screenMode && !this._portalMode,
 		);
 
-		this._selectionHintLabel?.set({
-			visible: selectionMode && !recordingMode,
-		});
+		this._updateSelectionHint();
+
+		if (selectionMode && !this._lastSelectionMode) {
+			// Re-entering selection mode: drop any stale area so the user
+			// always starts from a blank slate.
+			const selector = Main.screenshotUI?._areaSelector;
+			if (selector) this._selectionClearer.clear(selector);
+		}
+		this._lastSelectionMode = selectionMode;
+
+		this._updatePanelAutoHide();
 	}
 
 	_connectDragOpacity() {
@@ -1207,6 +1251,9 @@ export default class GradiaCompanion extends Extension {
 				mode: Clutter.AnimationMode.EASE_OUT_QUAD,
 			});
 			this._resolutionOverlay?.onDragStarted();
+
+			// Keep the bottom panel hidden while redrawing the selection.
+			if (this._panelHidden) this._setPanelOpacity(0, 120);
 		});
 
 		this._dragEndedId = selector.connect("drag-ended", () => {
@@ -1216,6 +1263,7 @@ export default class GradiaCompanion extends Extension {
 				mode: Clutter.AnimationMode.EASE_OUT_QUAD,
 			});
 			this._resolutionOverlay?.onDragEnded();
+			this._updatePanelAutoHide();
 		});
 	}
 
@@ -1228,6 +1276,94 @@ export default class GradiaCompanion extends Extension {
 				selector.disconnect(this[id]);
 				this[id] = null;
 			}
+		}
+	}
+
+	_setPanelOpacity(opacity, duration = 150) {
+		const panel = Main.screenshotUI?._panel;
+		if (!panel) return;
+		panel.remove_all_transitions();
+		panel.ease({
+			opacity,
+			duration,
+			mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+		});
+	}
+
+	// Clutter 的 should_pick 只会检查 actor 自身的 reactive 标志，而不会递归到
+	// 父级：仅把 _panel.reactive 设为 false 并不会让里面的按钮失效，鼠标仍会
+	// 触发 hover（tooltip）与点击。因此隐藏面板时要递归禁用整个子树的 reactive，
+	// 并在显示时恢复成隐藏前的状态（这样既保留淡出动画，又彻底切断交互）。
+	_setPanelInteractive(interactive) {
+		const panel = Main.screenshotUI?._panel;
+		if (!panel) return;
+
+		if (!interactive) {
+			if (this._panelReactiveStates) return;
+			const states = new Map();
+			const walk = (actor) => {
+				states.set(actor, actor.reactive);
+				actor.reactive = false;
+				for (const child of actor.get_children()) walk(child);
+			};
+			walk(panel);
+			this._panelReactiveStates = states;
+		} else {
+			const states = this._panelReactiveStates;
+			if (!states) return;
+			for (const [actor, wasReactive] of states)
+				actor.reactive = wasReactive;
+			this._panelReactiveStates = null;
+		}
+	}
+
+	_panelShouldHide() {
+		if (this._isRecordingMode()) return false;
+		if (!Main.screenshotUI?._selectionButton?.checked) return false;
+		const tool = this._toolbar?.selectedTool ?? "select";
+		return this._isDrawingTool(tool);
+	}
+
+	_updatePanelAutoHide() {
+		if (this._panelShouldHide()) this._hideBottomPanel();
+		else this._showBottomPanel();
+	}
+
+	_hideBottomPanel() {
+		const panel = Main.screenshotUI?._panel;
+		if (!panel) return;
+		this._panelHidden = true;
+		this._setPanelInteractive(false);
+		this._setPanelOpacity(0, 120);
+
+		const closeBtn = Main.screenshotUI?._closeButton;
+		if (closeBtn) {
+			closeBtn.reactive = false;
+			closeBtn.remove_all_transitions();
+			closeBtn.ease({
+				opacity: 0,
+				duration: 120,
+				mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+			});
+		}
+	}
+
+	_showBottomPanel() {
+		const panel = Main.screenshotUI?._panel;
+		if (!panel) return;
+		this._panelHidden = false;
+		this._setPanelInteractive(true);
+		this._setPanelOpacity(255, 150);
+
+		const closeBtn = Main.screenshotUI?._closeButton;
+		if (closeBtn) {
+			closeBtn.reactive = true;
+			closeBtn.remove_all_transitions();
+			closeBtn.ease({
+				opacity: 255,
+				duration: 150,
+				mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+			});
 		}
 	}
 
@@ -1481,29 +1617,25 @@ export default class GradiaCompanion extends Extension {
 			);
 		}
 
-		if (this._settings.get_boolean("clear-selection")) {
-			this._selectionClearer.patch(ui._areaSelector);
+		this._selectionHintLabel = new St.Label({
+			text: _("Drag to Make a Selection"),
+			style_class: "screenshot-ui-panel gradia-hint-label",
+			x_align: Clutter.ActorAlign.CENTER,
+			y_align: Clutter.ActorAlign.CENTER,
+			x_expand: true,
+			y_expand: true,
+		});
+		primaryBin.add_child(this._selectionHintLabel);
 
-			this._selectionHintLabel = new St.Label({
-				text: _("Drag to Make a Selection"),
-				style_class: "screenshot-ui-panel gradia-hint-label",
-				x_align: Clutter.ActorAlign.CENTER,
-				y_align: Clutter.ActorAlign.CENTER,
-				x_expand: true,
-				y_expand: true,
+		this._hideLabelId = ui._areaSelector.connect("drag-started", () => {
+			this._selectionDragged = true;
+			this._selectionHintLabel?.ease({
+				opacity: 0,
+				duration: 200,
+				mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+				onComplete: () => this._selectionHintLabel?.hide(),
 			});
-			primaryBin.add_child(this._selectionHintLabel);
-
-			const hideLabelId = ui._areaSelector.connect("drag-started", () => {
-				this._selectionHintLabel?.ease({
-					opacity: 0,
-					duration: 200,
-					mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-					onComplete: () => this._selectionHintLabel?.hide(),
-				});
-				ui._areaSelector.disconnect(hideLabelId);
-			});
-		}
+		});
 
 		this._connectDragOpacity();
 
@@ -1522,6 +1654,10 @@ export default class GradiaCompanion extends Extension {
 	_removeUI() {
 		this._cancelTextEntry();
 		this._destroyTrashButton();
+
+		// 先恢复面板子树的交互状态，避免下面销毁 ocr/settings 按钮后再去
+		// 访问已销毁的 actor。
+		this._setPanelInteractive(true);
 
 		if (this._idleSourceId) {
 			GLib.source_remove(this._idleSourceId);
@@ -1558,6 +1694,13 @@ export default class GradiaCompanion extends Extension {
 		}
 
 		this._disconnectDragOpacity();
+
+		if (this._hideLabelId) {
+			const areaSelector = ui._areaSelector;
+			if (areaSelector) areaSelector.disconnect(this._hideLabelId);
+			this._hideLabelId = null;
+		}
+
 		this._selectionClearer.restore();
 
 		const selector = ui._areaSelector;
@@ -1586,6 +1729,24 @@ export default class GradiaCompanion extends Extension {
 		if (this._scrollId) {
 			Main.screenshotUI.disconnect(this._scrollId);
 			this._scrollId = null;
+		}
+
+		this._panelHidden = false;
+		this._lastSelectionMode = false;
+
+		const panel = ui._panel;
+		if (panel) {
+			panel.reactive = true;
+			panel.remove_all_transitions();
+			panel.show();
+			panel.opacity = 255;
+		}
+
+		const closeBtn = ui._closeButton;
+		if (closeBtn) {
+			closeBtn.reactive = true;
+			closeBtn.remove_all_transitions();
+			closeBtn.opacity = 255;
 		}
 
 		if (this._resolutionOverlay) {

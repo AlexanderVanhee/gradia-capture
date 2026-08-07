@@ -1,180 +1,180 @@
 .gradia-toolbar {
-    border-radius: 9999px;
-    padding: 6px 6px;
-    spacing: 8px;
-    margin-top: 12px;
+	border-radius: 9999px;
+	padding: 6px 6px;
+	spacing: 8px;
+	margin-top: 12px;
 }
 
 .gradia-square-button {
-    min-width: 32px;
-    max-width: 32px;
-    min-height: 32px;
-    max-height: 32px;
-    border-radius: 9999px;
-    padding: 0;
-    background-color: transparent;
+	min-width: 32px;
+	max-width: 32px;
+	min-height: 32px;
+	max-height: 32px;
+	border-radius: 9999px;
+	padding: 0;
+	background-color: transparent;
 }
 
 .gradia-square-button:checked {
-    background-color: #48484b;
+	background-color: #48484b;
 }
 
 .gradia-square-button:hover {
-    background-color: #515155;
+	background-color: #515155;
 }
 
 .gradia-square-button:active {
-    background-color: #67676c;
+	background-color: #67676c;
 }
 
 .gradia-ring-button {
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
-    min-height: 24px;
-    max-width: 24px;
-    max-height: 24px;
-    border-radius: 9999px;
-    border: 3px solid transparent;
-    padding: 0;
-    background-color: transparent;
+	width: 24px;
+	height: 24px;
+	min-width: 24px;
+	min-height: 24px;
+	max-width: 24px;
+	max-height: 24px;
+	border-radius: 9999px;
+	border: 3px solid transparent;
+	padding: 0;
+	background-color: transparent;
 }
 
 .gradia-swatch {
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
-    min-height: 18px;
-    max-width: 18px;
-    max-height: 18px;
-    border-radius: 9999px;
-    border: 0;
-    padding: 0;
+	width: 18px;
+	height: 18px;
+	min-width: 18px;
+	min-height: 18px;
+	max-width: 18px;
+	max-height: 18px;
+	border-radius: 9999px;
+	border: 0;
+	padding: 0;
 }
 
 .gradia-color-button {
-    border-radius: 99999px;
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    min-height: 20px;
-    max-width: 20px;
-    max-height: 20px;
-    margin: 2px;
-    padding: 0;
-    border: 2px solid transparent;
-    outline: 2px solid transparent;
-    outline-offset: 2px;
+	border-radius: 99999px;
+	width: 20px;
+	height: 20px;
+	min-width: 20px;
+	min-height: 20px;
+	max-width: 20px;
+	max-height: 20px;
+	margin: 2px;
+	padding: 0;
+	border: 2px solid transparent;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
 }
 .gradia-color-button:checked {
-    outline-color: inherit;
-    border-color: transparent;
+	outline-color: inherit;
+	border-color: transparent;
 }
 
 .gradia-separator {
-    background-color: rgba(255, 255, 255, 0.3);
-    width: 1px;
-    margin: 4px 4px;
+	background-color: rgba(255, 255, 255, 0.3);
+	width: 1px;
+	margin: 4px 4px;
 }
 .gradia-check-icon {
-    icon-size: 12px;
-    color: white;
+	icon-size: 12px;
+	color: white;
 }
 .gradia-check-icon-dark {
-    icon-size: 12px;
-    color: rgba(0, 0, 0, 0.8);
+	icon-size: 12px;
+	color: rgba(0, 0, 0, 0.8);
 }
 
 .gradia-text-entry {
-    background-color: transparent;
-    border: 1.5px solid -st-accent-color;
-    border-radius: 3px;
-    padding: 2px 4px;
-    min-width: 40px;
-    selection-background-color: rgba(255, 255, 255, 0.25);
-    box-shadow: none;
+	background-color: transparent;
+	border: 1.5px solid -st-accent-color;
+	border-radius: 3px;
+	padding: 2px 4px;
+	min-width: 40px;
+	selection-background-color: rgba(255, 255, 255, 0.25);
+	box-shadow: none;
 }
 
 .gradia-text-entry:focus {
-    background-color: transparent;
+	background-color: transparent;
 }
 
 .gradia-circle-button {
-    min-width: 32px;
-    max-width: 32px;
-    min-height: 32px;
-    max-height: 32px;
-    border-radius: 9999px;
-    padding: 0;
+	min-width: 32px;
+	max-width: 32px;
+	min-height: 32px;
+	max-height: 32px;
+	border-radius: 9999px;
+	padding: 0;
 }
 
 .gradia-selection-trash {
-    background-color: #3a3a3d;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+	background-color: #3a3a3d;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .gradia-selection-trash:hover {
-    background-color: #48484b;
+	background-color: #48484b;
 }
 
 .gradia-selection-trash:active {
-    background-color: #67676c;
+	background-color: #67676c;
 }
 
 .gradia-pill-button {
-    border-radius: 9999px;
-    font-size: 13px;
-    font-weight: bold;
-    padding: 4px 8px;
-    border: none;
-    min-width: 50px;
+	border-radius: 9999px;
+	font-size: 13px;
+	font-weight: bold;
+	padding: 4px 8px;
+	border: none;
+	min-width: 50px;
 }
 
 .gradia-osd-button {
-    background-color: rgba(0, 0, 0, 0.45);
-    color: #ffffff;
+	background-color: rgba(0, 0, 0, 0.45);
+	color: #ffffff;
 }
 .gradia-osd-button:hover {
-    background-color: rgba(0, 0, 0, 0.62);
+	background-color: rgba(0, 0, 0, 0.62);
 }
 .gradia-osd-button:active {
-    background-color: rgba(0, 0, 0, 0.75);
+	background-color: rgba(0, 0, 0, 0.75);
 }
 
 .gradia-resolution-label {
-    background-color: rgba(0, 0, 0, 0.75);
-    border-radius: 999px;
-    color: #ffffff;
-    font-family: monospace;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 6px 12px;
+	background-color: rgba(0, 0, 0, 0.75);
+	border-radius: 999px;
+	color: #ffffff;
+	font-family: monospace;
+	font-size: 13px;
+	font-weight: 600;
+	padding: 6px 12px;
 }
 
 .screenshot-ui-show-pointer-button {
-    padding: 10px;
-    min-width: 0;
-    min-height: 0;
+	padding: 10px;
+	min-width: 0;
+	min-height: 0;
 }
 
 .gradia-copied-label {
-    background-color: -st-accent-color;
-    color: white;
-    border-radius: 9999px;
-    padding: 5px 16px 5px 12px;
-    font-size: 13px;
-    font-weight: bold;
-    spacing: 4px;
+	background-color: -st-accent-color;
+	color: white;
+	border-radius: 9999px;
+	padding: 5px 16px 5px 12px;
+	font-size: 13px;
+	font-weight: bold;
+	spacing: 4px;
 }
 
 .gradia-toast-border {
-    border: 3.5px solid #222226;
-    border-radius: 12px;
+	border: 3.5px solid #222226;
+	border-radius: 12px;
 }
 
 .gradia-hint-label {
-    border-radius: 9999px;
-    font-size: 16px;
-    font-weight: 700;
-    padding: 14px 24px;
+	border-radius: 9999px;
+	font-size: 16px;
+	font-weight: 700;
+	padding: 14px 24px;
 }

@@ -246,20 +246,6 @@ const AboutPage = GObject.registerClass(
 					this._settings.set_string("screenshot-format", selected.id);
 			});
 
-			const clearSelectionRow = new Adw.SwitchRow({
-				title: _("Disable Initial Selection"),
-				subtitle: _(
-					"Hide the default or last pre-selected area when the overlay opens",
-				),
-			});
-
-			this._settings.bind(
-				"clear-selection",
-				clearSelectionRow,
-				"active",
-				Gio.SettingsBindFlags.DEFAULT,
-			);
-
 			const compositeWindowRow = new Adw.SwitchRow({
 				title: _("Include Parent Windows"),
 				subtitle: _(
@@ -287,7 +273,6 @@ const AboutPage = GObject.registerClass(
 			);
 
 			group.add(formatRow);
-			group.add(clearSelectionRow);
 			group.add(compositeWindowRow);
 			group.add(soundRow);
 			this.add(group);
