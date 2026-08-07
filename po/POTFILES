@@ -1,0 +1,10 @@
+# List of source files containing translatable strings
+
+src/extension.js
+src/topBar.js
+src/gradiaIntegration.js
+src/screenshotToast.js
+src/screenshotStore.js
+src/i18n.js
+src/prefs.js
+src/metadata.json
