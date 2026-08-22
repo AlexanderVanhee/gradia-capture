@@ -1,10 +1,8 @@
 import GLib from 'gi://GLib';
 
-const SCHEMA_ID = 'org.gnome.shell.extensions.gradia-companion';
-
 export class GradiaSettings {
     constructor(extension) {
-        this._settings = extension.getSettings(SCHEMA_ID);
+        this._settings = extension.getSettings();
     }
 
     loadToolSettings() {

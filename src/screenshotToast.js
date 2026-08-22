@@ -21,7 +21,6 @@ class ScreenshotToast {
     constructor(file, imageContent, imgW, imgH, showCopied = false) {
         this._file = file;
         this._timeoutId = 0;
-        this._destroyed = false;
         this._signalIds = [];
 
         let thumbH = 140;
@@ -246,10 +245,6 @@ class ScreenshotToast {
     }
 
     destroy() {
-        if (this._destroyed)
-            return;
-        this._destroyed = true;
-
         this._clearTimeout();
 
         for (const [obj, id] of this._signalIds)

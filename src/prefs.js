@@ -84,7 +84,7 @@ const AboutPage = GObject.registerClass(
             });
 
             const button = new Gtk.LinkButton({
-                label: 'Donate ♥',
+                label: 'Donate',
                 uri: 'https://ko-fi.com/alexandervanhee',
                 valign: Gtk.Align.CENTER,
                 css_classes: ['pill'],

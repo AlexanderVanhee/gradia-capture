@@ -21,8 +21,16 @@ export const Tooltip = GObject.registerClass(
                 else
                     this._hide();
             });
-            widget.connect('destroy', () => this.destroy());
         }
+        
+        destroy() {
+            if (this._timeoutId) {
+                GLib.source_remove(this._timeoutId);
+                this._timeoutId = null;
+            }
+            super.destroy();
+        }
+        
         _scheduleShow(widget) {
             if (this._timeoutId)
                 return;
