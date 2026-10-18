@@ -2,8 +2,10 @@ import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import Clutter from 'gi://Clutter';
 import Cairo from 'gi://cairo';
+import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
+import Shell from 'gi://Shell';
 import St from 'gi://St';
 
 import { Toolbar, TRASH_BUTTON_RADIUS } from './topBar.js';
@@ -65,6 +67,7 @@ const DrawingCanvas = GObject.registerClass(
             this._dragGrab = null;
             this._stampCounter = 1;
             this._selectedStroke = null;
+            this._blurSourceProvider = null;
 
             this._scaleX = 1;
             this._scaleY = 1;
@@ -82,6 +85,21 @@ const DrawingCanvas = GObject.registerClass(
                 this._selectedStroke = null;
         }
         setStrokeWidth(w) { this._strokeWidth = w; }
+        setBlurSourceProvider(fn) { this._blurSourceProvider = fn; }
+
+        // Maps canvas-local coordinates onto the full-stage screenshot pixels.
+        _localBlurSource() {
+            const src = this._blurSourceProvider?.();
+            if (!src)
+                return null;
+            const [stageX, stageY] = this.get_transformed_position();
+            return {
+                surface: src.surface,
+                scale: src.scale,
+                offsetX: stageX * src.scale,
+                offsetY: stageY * src.scale,
+            };
+        }
 
         clear() {
             this._strokes = [];
@@ -313,6 +331,7 @@ const DrawingCanvas = GObject.registerClass(
                 allStrokes.push(this._currentStroke);
 
             let stampCounter = 1;
+            let blurSource;
 
             for (const stroke of allStrokes) {
                 const tool = getToolDef(stroke.toolId);
@@ -323,12 +342,15 @@ const DrawingCanvas = GObject.registerClass(
                     .map(sp => this._stageToLocal(sp.x, sp.y))
                     .filter(p => p !== null);
 
+                if (tool.needsBlurSource && blurSource === undefined)
+                    blurSource = this._localBlurSource();
+
                 tool.render(cr, {
                     color: stroke.color,
                     points: localPoints,
                     counter: stroke.toolId === 'stamp' ? stampCounter++ : stroke.counter,
                     text: stroke.text,
-                }, stroke.strokeWidth);
+                }, stroke.strokeWidth, blurSource);
             }
 
             if (this._selectedStroke) {
@@ -775,6 +797,50 @@ export default class GradiaCompanion extends Extension {
         this._toolbar._updateDrawingControlsSensitivity();
     }
 
+    // Returns the frozen full-stage screenshot as a Cairo surface for the blur
+    // preview, or null while it is still being read (a repaint follows once ready).
+    _ensureBlurSource() {
+        const texture = Main.screenshotUI._stageScreenshot?.get_content()?.get_texture();
+        if (!texture)
+            return null;
+
+        if (this._blurSource?.texture === texture)
+            return this._blurSource.surface ? this._blurSource : null;
+
+        this._releaseBlurSource();
+        const entry = { texture, surface: null, scale: 1 };
+        this._blurSource = entry;
+        this._loadBlurSource(entry).catch(e => {
+            console.error(`Gradia: failed to read screenshot for blur: ${e.message}`);
+        });
+        return null;
+    }
+
+    async _loadBlurSource(entry) {
+        const stream = Gio.MemoryOutputStream.new_resizable();
+        const pixbuf = await Shell.Screenshot.composite_to_stream(
+            entry.texture, 0, 0, -1, -1, Main.screenshotUI._scale, null, 0, 0, 1, stream);
+        stream.close(null);
+        if (this._blurSource !== entry)
+            return;
+
+        const surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, pixbuf.get_width(), pixbuf.get_height());
+        const cr = new Cairo.Context(surface);
+        imports.gi.Gdk.cairo_set_source_pixbuf(cr, pixbuf, 0, 0);
+        cr.paint();
+        cr.$dispose();
+
+        entry.scale = pixbuf.get_width() / (global.stage.width || pixbuf.get_width());
+        entry.surface = surface;
+        for (const canvas of this._canvases ?? [])
+            canvas.queue_repaint();
+    }
+
+    _releaseBlurSource() {
+        this._blurSource?.surface?.finish();
+        this._blurSource = null;
+    }
+
     _compositeStrokesOntoPixbuf(bytes, pixbuf, data) {
         const { selX, selY, selW, selH, strokes, stageScale } = data;
         if (selW <= 0 || selH <= 0)
@@ -789,6 +855,16 @@ export default class GradiaCompanion extends Extension {
         const cr = new Cairo.Context(surface);
         imports.gi.Gdk.cairo_set_source_pixbuf(cr, pixbuf, 0, 0);
         cr.paint();
+
+        let blurSource = null;
+        if (strokes.some(s => getToolDef(s.toolId)?.needsBlurSource)) {
+            const base = new Cairo.ImageSurface(Cairo.Format.ARGB32, imgWidth, imgHeight);
+            const bcr = new Cairo.Context(base);
+            imports.gi.Gdk.cairo_set_source_pixbuf(bcr, pixbuf, 0, 0);
+            bcr.paint();
+            bcr.$dispose();
+            blurSource = { surface: base, scale: 1, offsetX: 0, offsetY: 0 };
+        }
 
         for (const stroke of strokes) {
             const tool = getToolDef(stroke.toolId);
@@ -807,10 +883,11 @@ export default class GradiaCompanion extends Extension {
                 points: converted,
                 counter: stroke.counter,
                 text: stroke.text,
-            }, lw);
+            }, lw, blurSource);
         }
 
         cr.$dispose();
+        blurSource?.surface.finish();
 
         const newPixbuf = imports.gi.Gdk.pixbuf_get_from_surface(surface, 0, 0, imgWidth, imgHeight);
         if (!newPixbuf)
@@ -1010,6 +1087,9 @@ export default class GradiaCompanion extends Extension {
         for (const canvas of this._canvases)
             canvas.setTool(id);
 
+        if (getToolDef(id)?.needsBlurSource)
+            this._ensureBlurSource();
+
         for (const overlay of this._overlays)
             overlay.reactive = drawing || dragging;
 
@@ -1140,6 +1220,7 @@ export default class GradiaCompanion extends Extension {
                 source: bin,
                 coordinate: Clutter.BindCoordinate.ALL,
             }));
+            canvas.setBlurSourceProvider(() => this._ensureBlurSource());
             ui.insert_child_below(canvas, ui._areaSelector);
             this._canvases.push(canvas);
 
@@ -1380,6 +1461,7 @@ export default class GradiaCompanion extends Extension {
     _removeUI() {
         this._cancelTextEntry();
         this._destroyTrashButton();
+        this._releaseBlurSource();
 
         if (this._idleSourceId) {
             GLib.source_remove(this._idleSourceId);

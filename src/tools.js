@@ -38,6 +38,42 @@ function standardHitTest(stroke, sx, sy) {
     return rectHit(this.bounds(stroke), sx, sy);
 }
 
+// Blurs a region by shrinking it to a handful of pixels and scaling it back up.
+// The shrink step throws the original detail away, so the result can't be un-blurred.
+// `source` maps context coordinates to pixels of the unannotated screenshot:
+// sourcePixel = coord * scale + offset.
+function paintBlurredRegion(cr, source, x, y, w, h, lineWidth) {
+    const sx = x * source.scale + source.offsetX;
+    const sy = y * source.scale + source.offsetY;
+    const sw = w * source.scale;
+    const sh = h * source.scale;
+    const blockSize = Math.max(4, (14 + lineWidth * 3) * source.scale);
+    const tw = Math.max(1, Math.ceil(sw / blockSize));
+    const th = Math.max(1, Math.ceil(sh / blockSize));
+
+    const small = new Cairo.ImageSurface(Cairo.Format.ARGB32, tw, th);
+    const scr = new Cairo.Context(small);
+    scr.scale(tw / sw, th / sh);
+    scr.translate(-sx, -sy);
+    scr.setSourceSurface(source.surface, 0, 0);
+    scr.getSource().setFilter(Cairo.Filter.GOOD);
+    scr.getSource().setExtend(Cairo.Extend.PAD);
+    scr.paint();
+    scr.$dispose();
+
+    cr.save();
+    cr.rectangle(x, y, w, h);
+    cr.clip();
+    cr.translate(x, y);
+    cr.scale(w / tw, h / th);
+    cr.setSourceSurface(small, 0, 0);
+    cr.getSource().setFilter(Cairo.Filter.BILINEAR);
+    cr.getSource().setExtend(Cairo.Extend.PAD);
+    cr.paint();
+    cr.restore();
+    small.finish();
+}
+
 export const TOOLS = [
     {
         id: 'select',
@@ -116,6 +152,34 @@ export const TOOLS = [
             cr.setSourceRGBA(r, g, b, 1.0);
             const p0 = stroke.points[0], p1 = stroke.points[stroke.points.length - 1];
             cr.rectangle(Math.min(p0.x, p1.x), Math.min(p0.y, p1.y), Math.abs(p1.x - p0.x), Math.abs(p1.y - p0.y));
+            cr.fill();
+        },
+    },
+    {
+        id: 'blur',
+        name: 'Blur',
+        icon: 'icons/blur-symbolic.svg',
+        keybindings: [Clutter.KEY_0, Clutter.KEY_agrave, Clutter.KEY_x],
+        isDrawing: true,
+        needsBlurSource: true,
+        beginStroke: () => ({}),
+        bounds: makeStrokeBounds(() => SELECTION_PADDING),
+        hitTest: standardHitTest,
+        render(cr, stroke, lineWidth, blurSource) {
+            if (stroke.points.length < 2) return;
+            const p0 = stroke.points[0], p1 = stroke.points[stroke.points.length - 1];
+            const x = Math.min(p0.x, p1.x), y = Math.min(p0.y, p1.y);
+            const w = Math.abs(p1.x - p0.x), h = Math.abs(p1.y - p0.y);
+            if (w < 1 || h < 1) return;
+
+            if (blurSource) {
+                paintBlurredRegion(cr, blurSource, x, y, w, h, lineWidth);
+                return;
+            }
+
+            // Screenshot pixels still loading: mark the region so the user sees it.
+            cr.setSourceRGBA(0.5, 0.5, 0.5, 0.85);
+            cr.rectangle(x, y, w, h);
             cr.fill();
         },
     },
