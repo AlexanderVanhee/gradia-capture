@@ -45,6 +45,15 @@ function getToolDef(id) {
     return TOOLS.find(t => t.id === id) ?? null;
 }
 
+function resolveStampCounters(strokes) {
+    let stampCounter = 1;
+
+    return strokes.map(stroke => ({
+        ...stroke,
+        counter: stroke.toolId === 'stamp' ? stampCounter++ : stroke.counter,
+    }));
+}
+
 const DrawingCanvas = GObject.registerClass(
     class DrawingCanvas extends St.DrawingArea {
         _init(params) {
@@ -312,9 +321,7 @@ const DrawingCanvas = GObject.registerClass(
             if (this._currentStroke)
                 allStrokes.push(this._currentStroke);
 
-            let stampCounter = 1;
-
-            for (const stroke of allStrokes) {
+            for (const stroke of resolveStampCounters(allStrokes)) {
                 const tool = getToolDef(stroke.toolId);
                 if (!tool?.render)
                     continue;
@@ -326,7 +333,7 @@ const DrawingCanvas = GObject.registerClass(
                 tool.render(cr, {
                     color: stroke.color,
                     points: localPoints,
-                    counter: stroke.toolId === 'stamp' ? stampCounter++ : stroke.counter,
+                    counter: stroke.counter,
                     text: stroke.text,
                 }, stroke.strokeWidth);
             }
@@ -974,7 +981,7 @@ export default class GradiaCompanion extends Extension {
         }
 
         const strokes = this._canvases.flatMap(c =>
-            c.strokes.map(s => ({
+            resolveStampCounters(c.strokes).map(s => ({
                 color: s.color,
                 toolId: s.toolId,
                 counter: s.counter,
