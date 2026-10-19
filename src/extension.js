@@ -14,9 +14,11 @@ import { ResolutionOverlay } from './resolutionOverlay.js';
 import { isGradiaFlatpakInstalled, createOcrButton, createSettingsButton, launchGradiaOcrForFile, setOcrButtonEnabled } from './gradiaIntegration.js';
 import { destroyActiveToast } from './screenshotToast.js';
 import { SelectionClearer } from './selectionClearer.js';
+import { pixelatePixbufAlongStroke } from './pixelate.js';
 
 const MAX_CANVAS_WIDTH = 1920;
 const MAX_CANVAS_HEIGHT = 1080;
+const PIXELATE_TOOL_ID = 'pixelate';
 
 const MODE_BUTTONS = [
     ['_windowButton',    '_windowButtonId'],
@@ -212,7 +214,7 @@ const DrawingCanvas = GObject.registerClass(
 
             const tool = getToolDef(this._toolId);
 
-            if (tool?.id === 'freehand') {
+            if (tool?.id === 'freehand' || tool?.id === PIXELATE_TOOL_ID) {
                 this._currentStroke.stagePoints.push({ x: stageX, y: stageY });
             } else {
                 if (this._currentStroke.stagePoints.length === 1)
@@ -785,14 +787,35 @@ export default class GradiaCompanion extends Extension {
         const scaleX = imgWidth / selW;
         const scaleY = imgHeight / selH;
 
-        const surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, imgWidth, imgHeight);
-        const cr = new Cairo.Context(surface);
-        imports.gi.Gdk.cairo_set_source_pixbuf(cr, pixbuf, 0, 0);
-        cr.paint();
+        let currentPixbuf = pixbuf;
+        let surface = null;
+        let cr = null;
+
+        const ensureSurface = () => {
+            if (cr)
+                return cr;
+
+            surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, imgWidth, imgHeight);
+            cr = new Cairo.Context(surface);
+            imports.gi.Gdk.cairo_set_source_pixbuf(cr, currentPixbuf, 0, 0);
+            cr.paint();
+            return cr;
+        };
+
+        const flushSurfaceToPixbuf = () => {
+            if (!cr)
+                return currentPixbuf;
+
+            cr.$dispose();
+            cr = null;
+            currentPixbuf = imports.gi.Gdk.pixbuf_get_from_surface(surface, 0, 0, imgWidth, imgHeight);
+            surface = null;
+            return currentPixbuf;
+        };
 
         for (const stroke of strokes) {
             const tool = getToolDef(stroke.toolId);
-            if (!tool?.render)
+            if (!tool)
                 continue;
 
             const converted = stroke.stagePoints.map(p => ({
@@ -802,7 +825,22 @@ export default class GradiaCompanion extends Extension {
 
             const lw = stroke.strokeWidth * ((scaleX + scaleY) / 2);
 
-            tool.render(cr, {
+            if (stroke.toolId === PIXELATE_TOOL_ID) {
+                // Pixelation must sample the pixels produced by earlier strokes.
+                // Flush pending vector drawing before mutating the current pixbuf.
+                const sourcePixbuf = flushSurfaceToPixbuf();
+                if (!sourcePixbuf)
+                    return null;
+                currentPixbuf = pixelatePixbufAlongStroke(sourcePixbuf, converted, lw);
+                if (!currentPixbuf)
+                    return null;
+                continue;
+            }
+
+            if (!tool.render)
+                continue;
+
+            tool.render(ensureSurface(), {
                 color: stroke.color,
                 points: converted,
                 counter: stroke.counter,
@@ -810,9 +848,7 @@ export default class GradiaCompanion extends Extension {
             }, lw);
         }
 
-        cr.$dispose();
-
-        const newPixbuf = imports.gi.Gdk.pixbuf_get_from_surface(surface, 0, 0, imgWidth, imgHeight);
+        const newPixbuf = flushSurfaceToPixbuf();
         if (!newPixbuf)
             return null;
 

@@ -4,6 +4,7 @@ import PangoCairo from 'gi://PangoCairo';
 import Clutter from 'gi://Clutter';
 
 export const SELECTION_PADDING = 8;
+const PIXELATE_PATTERN_SIZE = 16;
 
 function hexToRgb(hex) {
     return {
@@ -36,6 +37,38 @@ function makeStrokeBounds(padFn) {
 
 function standardHitTest(stroke, sx, sy) {
     return rectHit(this.bounds(stroke), sx, sy);
+}
+
+let pixelatePatternCache = null;
+
+function createPixelatePattern(tileSize) {
+    const size = Math.max(4, Math.round(tileSize));
+    if (pixelatePatternCache?.size === size)
+        return pixelatePatternCache.pattern;
+
+    const half = Math.max(2, Math.floor(size / 2));
+    const surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, size, size);
+    const patternCr = new Cairo.Context(surface);
+
+    patternCr.setSourceRGB(1, 1, 1);
+    patternCr.paint();
+    patternCr.setSourceRGB(0, 0, 0);
+    patternCr.rectangle(0, 0, half, half);
+    patternCr.rectangle(half, half, size - half, size - half);
+    patternCr.fill();
+    patternCr.$dispose();
+
+    const pattern = new Cairo.SurfacePattern(surface);
+    pattern.setExtend(Cairo.Extend.REPEAT);
+    pattern.setFilter(Cairo.Filter.NEAREST);
+    pixelatePatternCache = { size, pattern };
+    return pattern;
+}
+
+function strokePath(cr, points) {
+    cr.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++)
+        cr.lineTo(points[i].x, points[i].y);
 }
 
 export const TOOLS = [
@@ -267,6 +300,29 @@ export const TOOLS = [
             cr.setSourceRGBA(textColor.r, textColor.g, textColor.b, 1.0);
             cr.moveTo(pt.x - extents.width / 2 - extents.x, pt.y - extents.height / 2 - extents.y);
             PangoCairo.show_layout(cr, layout);
+        },
+    },
+    {
+        id: 'pixelate',
+        name: 'Pixelate',
+        icon: 'icons/pixelate-symbolic.svg',
+        keybindings: [Clutter.KEY_0, Clutter.KEY_agrave, Clutter.KEY_m],
+        isDrawing: true,
+        beginStroke: () => ({}),
+        bounds: makeStrokeBounds(s => SELECTION_PADDING + (s.strokeWidth ?? 32) / 2),
+        hitTest: standardHitTest,
+        render(cr, stroke, lineWidth) {
+            if (stroke.points.length < 2) return;
+
+            const pattern = createPixelatePattern(PIXELATE_PATTERN_SIZE);
+            cr.save();
+            cr.setLineWidth(lineWidth);
+            cr.setLineCap(Cairo.LineCap.ROUND);
+            cr.setLineJoin(Cairo.LineJoin.ROUND);
+            cr.setSource(pattern);
+            strokePath(cr, stroke.points);
+            cr.stroke();
+            cr.restore();
         },
     },
 ];
