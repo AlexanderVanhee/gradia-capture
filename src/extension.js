@@ -898,6 +898,10 @@ export default class GradiaCompanion extends Extension {
             return Clutter.EVENT_PROPAGATE;
         });
 
+        // GNOME 51: ClutterText's key-binding controller consumes Return and emits
+        // 'activate' before 'key-press-event' runs, so the handler above never sees it.
+        clutterText.connect('activate', () => this._commitTextEntry());
+
         this._committingText = false;
         clutterText.connect('notify::has-key-focus', () => {
             if (!clutterText.has_key_focus() && !this._committingText)
