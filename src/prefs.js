@@ -5,6 +5,9 @@ import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
 import GdkPixbuf from 'gi://GdkPixbuf';
 import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import * as Config from 'resource:///org/gnome/Shell/Extensions/js/misc/config.js';
+
+const SHELL_MAJOR = parseInt(Config.PACKAGE_VERSION, 10);
 
 const FORMAT_INFO = [
     { id: 'png',  label: 'PNG'  },
@@ -220,6 +223,8 @@ const ShortcutsPage = GObject.registerClass(
                 ['Window Selection',           'w'],
                 ['Toggle Pointer Visibility',  'p'],
                 ['Toggle Screen Recording',    'v'],
+                // GNOME 51: the shell binds "r" to resetting the selection.
+                ...(SHELL_MAJOR >= 51 ? [['Reset Selection', 'r']] : []),
             ]);
 
             this._addGroup('Annotations', [
@@ -228,7 +233,7 @@ const ShortcutsPage = GObject.registerClass(
                 ['Crop Tool',            '1 q'],
                 ['Drag Tool',            '2 d'],
                 ['Freehand Tool',        '3 f'],
-                ['Rectangle Tool',       '4 r'],
+                ['Rectangle Tool',       SHELL_MAJOR >= 51 ? '4' : '4 r'],
                 ['Solid Rectangle Tool', '5 b'],
                 ['Highlighter Tool',     '6 h'],
                 ['Arrow Tool',           '7 a'],

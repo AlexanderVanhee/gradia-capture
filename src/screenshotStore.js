@@ -234,9 +234,19 @@ async function _captureWindowComposite(windowEntries, cursor) {
     return { bytes, pixbuf: finalPixbuf };
 }
 
+function _playCaptureSound() {
+    const player = global.display.get_sound_player();
+    // GNOME 51: the shell ships its own capture sound instead of using the sound theme.
+    const file = Gio.File.new_for_path(`${global.datadir}/sounds/screen-capture.oga`);
+    if (file.query_exists(null))
+        player.play_from_file(file, 'Screenshot taken', null);
+    else
+        player.play_from_theme('screen-capture', 'Screenshot taken', null);
+}
+
 export async function captureAndStoreScreenshot(texture, geometry, scale, cursor, compositeFn, windowComposite = null, { copy = true, save = true, externalSave = false, format = 'png', playSound = true } = {}) {
     if (playSound)
-        global.display.get_sound_player().play_from_theme('screen-capture', 'Screenshot taken', null);
+        _playCaptureSound();
 
     let finalBytes, finalPixbuf, alreadyEncoded = false;
 

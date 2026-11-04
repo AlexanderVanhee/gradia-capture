@@ -11,6 +11,7 @@ export class ResolutionOverlay {
         this._primaryBin = primaryBin;
         this._visible = false;
         this._motionId = null;
+        this._motionSource = null;
 
         this._label = new St.Label({
             style_class: 'gradia-resolution-label',
@@ -21,9 +22,18 @@ export class ResolutionOverlay {
     }
 
     onDragStarted() {
+        // GNOME 51: stopDrag() can emit 'drag-ended' from reset(), so start and end
+        // are not strictly paired. Never leave a previous connection behind.
+        this._disconnectMotion();
         this._fadeIn();
         const selector = Main.screenshotUI?._areaSelector;
-        if (selector) {
+        if (selector?._panGesture) {
+            // GNOME 51: once the pan gesture recognizes, actors leave the event
+            // chain and 'motion-event' stops firing for the rest of the drag.
+            this._motionSource = selector._panGesture;
+            this._motionId = this._motionSource.connect('pan-update', () => this._update());
+        } else if (selector) {
+            this._motionSource = selector;
             this._motionId = selector.connect('motion-event', () => {
                 this._update();
                 return Clutter.EVENT_PROPAGATE;
@@ -38,11 +48,10 @@ export class ResolutionOverlay {
     }
 
     _disconnectMotion() {
-        const selector = Main.screenshotUI?._areaSelector;
-        if (selector && this._motionId) {
-            selector.disconnect(this._motionId);
-            this._motionId = null;
-        }
+        if (this._motionSource && this._motionId)
+            this._motionSource.disconnect(this._motionId);
+        this._motionSource = null;
+        this._motionId = null;
     }
 
     _getMaxScale() {
