@@ -1119,6 +1119,13 @@ export default class GradiaCompanion extends Extension {
         }
     }
 
+    _copyOnlyAndClose() {
+        this._captureScreenshot({ copyOnly: true }).then(result => {
+            if (result !== undefined)
+                Main.screenshotUI.close();
+        });
+    }
+
     _ensureUI() {
         if (this._toolbar)
             return;
@@ -1302,10 +1309,7 @@ export default class GradiaCompanion extends Extension {
 
             if (ctrl && sym === Clutter.KEY_c) {
                 if (!this._isRecordingMode() && !this._portalMode) {
-                    this._captureScreenshot({ copyOnly: true }).then(result => {
-                        if (result !== undefined)
-                            Main.screenshotUI.close();
-                    });
+                    this._copyOnlyAndClose();
                     return Clutter.EVENT_STOP;
                 }
             }
@@ -1342,6 +1346,28 @@ export default class GradiaCompanion extends Extension {
 
             return Clutter.EVENT_PROPAGATE;
         });
+
+        // GNOME 51: ScreenshotUI binds Ctrl+C to "capture" (save + copy) through a
+        // key-binding controller that runs before 'key-press-event'. Take Ctrl+C in
+        // the capture phase to keep our copy-only behaviour. KeyController is 50+.
+        if (Clutter.KeyController) {
+            this._ctrlCController = new Clutter.KeyController();
+            this._ctrlCController.connect('key-press', controller => {
+                const [, sym] = controller.get_key();
+                const [, pressed, latched, locked] = controller.get_state();
+                const ctrl = (pressed | latched | locked) & Clutter.ModifierType.CONTROL_MASK;
+                if (!ctrl || sym !== Clutter.KEY_c)
+                    return Clutter.EVENT_PROPAGATE;
+                // Let the text entry keep its own Ctrl+C (copy selected text),
+                // and let the shell handle screencast / screenshot-only portal mode.
+                if (this._textEntry || this._isRecordingMode() || this._portalMode)
+                    return Clutter.EVENT_PROPAGATE;
+                this._copyOnlyAndClose();
+                return Clutter.EVENT_STOP;
+            });
+            Main.screenshotUI.add_action_full(
+                'gradia-ctrl-c', Clutter.EventPhase.CAPTURE, this._ctrlCController);
+        }
 
         for (const [prop, id] of MODE_BUTTONS) {
             this[id] = ui[prop].connect('notify::checked', () => this._updateVisibilityForMode());
@@ -1410,6 +1436,11 @@ export default class GradiaCompanion extends Extension {
         if (this._keyPressId) {
             Main.screenshotUI.disconnect(this._keyPressId);
             this._keyPressId = null;
+        }
+
+        if (this._ctrlCController) {
+            Main.screenshotUI.remove_action(this._ctrlCController);
+            this._ctrlCController = null;
         }
 
         for (const [prop, id] of MODE_BUTTONS) {
