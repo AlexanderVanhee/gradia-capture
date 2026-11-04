@@ -2,6 +2,9 @@ import Cairo from 'gi://cairo';
 import Pango from 'gi://Pango';
 import PangoCairo from 'gi://PangoCairo';
 import Clutter from 'gi://Clutter';
+import * as Config from 'resource:///org/gnome/shell/misc/config.js';
+
+const SHELL_MAJOR = parseInt(Config.PACKAGE_VERSION, 10);
 
 export const SELECTION_PADDING = 8;
 
@@ -86,7 +89,11 @@ export const TOOLS = [
         id: 'rectangle',
         name: 'Rectangle',
         icon: 'icons/square-outline-thick-symbolic.svg',
-        keybindings: [Clutter.KEY_4, Clutter.KEY_apostrophe, Clutter.KEY_r],
+        // GNOME 51: the shell binds plain "r" to resetting the selection and stops
+        // the event, so leave it to the shell.
+        keybindings: SHELL_MAJOR >= 51
+            ? [Clutter.KEY_4, Clutter.KEY_apostrophe]
+            : [Clutter.KEY_4, Clutter.KEY_apostrophe, Clutter.KEY_r],
         isDrawing: true,
         beginStroke: () => ({}),
         bounds: makeStrokeBounds(s => SELECTION_PADDING + (s.strokeWidth ?? 4)),
