@@ -6,6 +6,12 @@ import GObject from 'gi://GObject';
 import GdkPixbuf from 'gi://GdkPixbuf';
 import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
+// libadwaita 1.8 (GNOME 49+) moved the shortcut widget to Adw; older libadwaita
+// (Debian 13 / GNOME 48 ships 1.7.x) only has Gtk.ShortcutLabel.
+const ShortcutLabel = typeof Adw.ShortcutLabel === 'function'
+    ? Adw.ShortcutLabel
+    : Gtk.ShortcutLabel;
+
 const FORMAT_INFO = [
     { id: 'png',  label: 'PNG'  },
     { id: 'webp', label: 'WebP' },
@@ -245,7 +251,7 @@ const ShortcutsPage = GObject.registerClass(
                 group.set_description(note);
             for (const [label, accel] of entries) {
                 const row = new Adw.ActionRow({ title: label });
-                const shortcut = new Adw.ShortcutLabel({ accelerator: accel });
+                const shortcut = new ShortcutLabel({ accelerator: accel });
                 shortcut.set_valign(Gtk.Align.CENTER);
                 row.add_suffix(shortcut);
                 group.add(row);
@@ -271,7 +277,7 @@ const ShortcutsPage = GObject.registerClass(
             for (const [label, key] of entries) {
                 const row = new Adw.ActionRow({ title: label });
                 const accels = shellSettings.get_strv(key);
-                const shortcut = new Adw.ShortcutLabel({ accelerator: accels[0] ?? '' });
+                const shortcut = new ShortcutLabel({ accelerator: accels[0] ?? '' });
                 shortcut.set_valign(Gtk.Align.CENTER);
                 row.add_suffix(shortcut);
                 group.add(row);
