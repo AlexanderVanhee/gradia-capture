@@ -2,6 +2,7 @@ import Cairo from 'gi://cairo';
 import Pango from 'gi://Pango';
 import PangoCairo from 'gi://PangoCairo';
 import Clutter from 'gi://Clutter';
+import {N_} from './i18n.js';
 
 export const SELECTION_PADDING = 8;
 
@@ -41,7 +42,7 @@ function standardHitTest(stroke, sx, sy) {
 export const TOOLS = [
     {
         id: 'select',
-        name: 'Crop',
+        name: N_('Crop'),
         icon: 'icons/selection-opaque-3-symbolic.svg',
         keybindings: [Clutter.KEY_1, Clutter.KEY_ampersand, Clutter.KEY_q],
         isDrawing: false,
@@ -52,7 +53,7 @@ export const TOOLS = [
     },
     {
         id: 'drag',
-        name: 'Drag',
+        name: N_('Drag'),
         icon: 'icons/pointer-primary-click-symbolic.svg',
         keybindings: [Clutter.KEY_2, Clutter.KEY_eacute, Clutter.KEY_d],
         isDrawing: false,
@@ -64,7 +65,7 @@ export const TOOLS = [
     },
     {
         id: 'freehand',
-        name: 'Freehand',
+        name: N_('Freehand'),
         icon: 'document-edit-symbolic',
         keybindings: [Clutter.KEY_3, Clutter.KEY_quotedbl, Clutter.KEY_f],
         isDrawing: true,
@@ -84,7 +85,7 @@ export const TOOLS = [
     },
     {
         id: 'rectangle',
-        name: 'Rectangle',
+        name: N_('Rectangle'),
         icon: 'icons/square-outline-thick-symbolic.svg',
         keybindings: [Clutter.KEY_4, Clutter.KEY_apostrophe, Clutter.KEY_r],
         isDrawing: true,
@@ -103,7 +104,7 @@ export const TOOLS = [
     },
     {
         id: 'solid-rectangle',
-        name: 'Solid Rectangle',
+        name: N_('Solid Rectangle'),
         icon: 'icons/square-filled-symbolic.svg',
         keybindings: [Clutter.KEY_5, Clutter.KEY_parenleft, Clutter.KEY_b],
         isDrawing: true,
@@ -121,7 +122,7 @@ export const TOOLS = [
     },
     {
         id: 'highlighter',
-        name: 'Highlighter',
+        name: N_('Highlighter'),
         icon: 'icons/marker-symbolic.svg',
         keybindings: [Clutter.KEY_6, Clutter.KEY_section, Clutter.KEY_h],
         isDrawing: true,
@@ -142,7 +143,7 @@ export const TOOLS = [
     },
     {
         id: 'arrow',
-        name: 'Arrow',
+        name: N_('Arrow'),
         icon: 'icons/arrow1-top-right-symbolic.svg',
         keybindings: [Clutter.KEY_7, Clutter.KEY_egrave, Clutter.KEY_a],
         isDrawing: true,
@@ -173,7 +174,7 @@ export const TOOLS = [
     },
     {
         id: 'text',
-        name: 'Text',
+        name: N_('Text'),
         icon: 'icons/text-insert2-symbolic.svg',
         keybindings: [Clutter.KEY_8, Clutter.KEY_exclam, Clutter.KEY_t],
         isDrawing: true,
@@ -227,7 +228,7 @@ export const TOOLS = [
     },
     {
         id: 'stamp',
-        name: 'Number Stamp',
+        name: N_('Number Stamp'),
         icon: 'icons/one-circle-symbolic.svg',
         keybindings: [Clutter.KEY_9, Clutter.KEY_ccedilla, Clutter.KEY_n],
         isDrawing: true,

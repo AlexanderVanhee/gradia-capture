@@ -6,6 +6,7 @@ import St from 'gi://St';
 
 
 import { attachTooltip } from './tooltip.js';
+import {_} from './i18n.js';
 
 const GRADIA_FLATPAK_ID = 'be.alexandervanhee.gradia';
 const GRADIA_DESKTOP_ID = `${GRADIA_FLATPAK_ID}.desktop`;
@@ -77,7 +78,7 @@ export function createOcrButton(onClick) {
         toggle_mode: false,
     });
     button.connect('clicked', () => onClick());
-    attachTooltip(button, 'Extract Text', St.Side.TOP);
+    attachTooltip(button, _('Extract Text'), St.Side.TOP);
     return button;
 }
 
@@ -88,7 +89,7 @@ export function createSettingsButton(onClick) {
         toggle_mode: false,
     });
     button.connect('clicked', () => onClick());
-    attachTooltip(button, 'Settings', St.Side.TOP);
+    attachTooltip(button, _('Settings'), St.Side.TOP);
     return button;
 }
 

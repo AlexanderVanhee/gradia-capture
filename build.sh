@@ -15,6 +15,8 @@ gnome-extensions pack src \
     --extra-source="README.md" \
     $(find src -maxdepth 1 -name '*.js' ! -name 'extension.js' -printf '--extra-source=%f ') \
     --extra-source="../icons" \
+    --podir="../po" \
+    --gettext-domain="gradia-capture" \
     --schema="../schemas/org.gnome.shell.extensions.gradia-companion.gschema.xml"
 echo "Packing Done!"
 

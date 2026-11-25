@@ -14,6 +14,7 @@ import { ResolutionOverlay } from './resolutionOverlay.js';
 import { isGradiaFlatpakInstalled, createOcrButton, createSettingsButton, launchGradiaOcrForFile, setOcrButtonEnabled } from './gradiaIntegration.js';
 import { destroyActiveToast } from './screenshotToast.js';
 import { SelectionClearer } from './selectionClearer.js';
+import {_} from './i18n.js';
 
 const MAX_CANVAS_WIDTH = 1920;
 const MAX_CANVAS_HEIGHT = 1080;
@@ -1347,7 +1348,7 @@ export default class GradiaCompanion extends Extension {
             this._selectionClearer.patch(ui._areaSelector);
 
             this._selectionHintLabel = new St.Label({
-                text: 'Drag to Make a Selection',
+                text: _('Drag to Make a Selection'),
                 style_class: 'screenshot-ui-panel gradia-hint-label',
                 x_align: Clutter.ActorAlign.CENTER,
                 y_align: Clutter.ActorAlign.CENTER,

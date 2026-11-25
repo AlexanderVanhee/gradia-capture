@@ -7,18 +7,19 @@ import {Slider} from 'resource:///org/gnome/shell/ui/slider.js';
 
 import { TOOLS } from './tools.js';
 import { attachTooltip } from './tooltip.js';
+import {_, N_} from './i18n.js';
 
 export const TRASH_BUTTON_RADIUS = 16;
 
 const COLORS = [
-    { name: 'White', hex: '#ffffff' },
-    { name: 'Black', hex: '#000000' },
-    { name: 'Red', hex: '#ff4444' },
-    { name: 'Orange', hex: '#ff8800' },
-    { name: 'Yellow', hex: '#ffdd00' },
-    { name: 'Green', hex: '#44cc44' },
-    { name: 'Blue', hex: '#4488ff' },
-    { name: 'Purple', hex: '#aa44ff' },
+    { name: N_('White'), hex: '#ffffff' },
+    { name: N_('Black'), hex: '#000000' },
+    { name: N_('Red'), hex: '#ff4444' },
+    { name: N_('Orange'), hex: '#ff8800' },
+    { name: N_('Yellow'), hex: '#ffdd00' },
+    { name: N_('Green'), hex: '#44cc44' },
+    { name: N_('Blue'), hex: '#4488ff' },
+    { name: N_('Purple'), hex: '#aa44ff' },
 ];
 
 function makeIcon(spec, extensionPath = '') {
@@ -145,7 +146,7 @@ export const Toolbar = GObject.registerClass({
             this.add_child(btn);
             this._toolButtons.push(btn);
 
-            btn._tooltip = attachTooltip(btn, tool.name);
+            btn._tooltip = attachTooltip(btn, _(tool.name));
 
             if (i === 1)
                 this._addSeparator();
@@ -177,7 +178,7 @@ export const Toolbar = GObject.registerClass({
             this.add_child(ring);
             this._colorButtons.push(ring);
 
-            attachTooltip(ring, color.name);
+            attachTooltip(ring, _(color.name));
         }
     }
 
@@ -203,7 +204,7 @@ export const Toolbar = GObject.registerClass({
         this._undoBtn.connect('clicked', () => this.emit('undo'));
         this.add_child(this._undoBtn);
 
-        attachTooltip(this._undoBtn, 'Undo');
+        attachTooltip(this._undoBtn, _('Undo'));
 
         this._clearBtn = new St.Button({
             child: makeIcon('user-trash-symbolic', this._extensionPath),
@@ -214,7 +215,7 @@ export const Toolbar = GObject.registerClass({
         this._clearBtn.connect('clicked', () => this.emit('clear'));
         this.add_child(this._clearBtn);
 
-        attachTooltip(this._clearBtn, 'Clear all');
+        attachTooltip(this._clearBtn, _('Clear all'));
     }
 
     _addSeparator() {
@@ -244,7 +245,7 @@ export const Toolbar = GObject.registerClass({
         const btn = this._toolButtons.find(b => b._toolId === 'select');
         const iconName = enabled ? 'icons/selection-opaque-3-symbolic.svg' : 'icons/display-symbolic.svg';
         btn.get_child().gicon = Gio.Icon.new_for_string(`${this._extensionPath}/${iconName}`);
-        btn._tooltip.text = enabled ? 'Crop' : 'Pick Display';
+        btn._tooltip.text = enabled ? _('Crop') : _('Pick Display');
     }
 
     scrollLineWidth(direction) {

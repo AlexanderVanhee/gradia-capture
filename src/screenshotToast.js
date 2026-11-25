@@ -4,6 +4,7 @@ import St from 'gi://St';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import { isGradiaFlatpakInstalled, launchGradiaForScreenshot, openContainingFolder, openFileInDefaultApp } from './gradiaIntegration.js';
+import {_} from './i18n.js';
 
 const TOAST_WIDTH = 250;
 const TOAST_MARGIN = 18;
@@ -146,7 +147,7 @@ class ScreenshotToast {
             });
 
             const label = new St.Label({
-                text: 'Copied!',
+                text: _('Copied!'),
                 y_align: Clutter.ActorAlign.CENTER,
                 x_expand: true,
             });
