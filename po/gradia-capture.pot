@@ -1,0 +1,319 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Gradia Capture package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gradia Capture 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-20 09:59+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/extension.js:1351
+msgid "Drag to Make a Selection"
+msgstr ""
+
+#: src/gradiaIntegration.js:81
+msgid "Extract Text"
+msgstr ""
+
+#: src/gradiaIntegration.js:92
+msgid "Settings"
+msgstr ""
+
+#: src/prefs.js:36
+msgid "Preferences"
+msgstr ""
+
+#: src/prefs.js:81
+msgid "Support This Extension"
+msgstr ""
+
+#: src/prefs.js:88
+msgid "If you enjoy my work, consider donating!"
+msgstr ""
+
+#: src/prefs.js:94
+msgid "Donate"
+msgstr ""
+
+#: src/prefs.js:110
+msgid "Text Recognition"
+msgstr ""
+
+#: src/prefs.js:129
+msgid "Gradia Installed"
+msgstr ""
+
+#: src/prefs.js:130
+msgid "OCR text extraction is available in the screenshot UI"
+msgstr ""
+
+#: src/prefs.js:132
+msgid "Get the Gradia Flatpak"
+msgstr ""
+
+#: src/prefs.js:133
+msgid "Install the app via Flathub to enable the OCR text extraction feature"
+msgstr ""
+
+#: src/prefs.js:152
+msgid "Screenshot"
+msgstr ""
+
+#: src/prefs.js:163
+msgid "File Format"
+msgstr ""
+
+#: src/prefs.js:164
+msgid "Changing this may slow down saving"
+msgstr ""
+
+#: src/prefs.js:184
+msgid "Disable Initial Selection"
+msgstr ""
+
+#: src/prefs.js:185
+msgid "Hide the default or last pre-selected area when the overlay opens"
+msgstr ""
+
+#: src/prefs.js:191
+msgid "Include Parent Windows"
+msgstr ""
+
+#: src/prefs.js:192
+msgid "Also capture parent windows when a transient window is selected"
+msgstr ""
+
+#: src/prefs.js:198
+msgid "Sound"
+msgstr ""
+
+#: src/prefs.js:199
+msgid "Play a shutter sound effect on capture"
+msgstr ""
+
+#: src/prefs.js:216
+msgid "Shortcuts"
+msgstr ""
+
+#: src/prefs.js:220
+msgid "Screenshot Mode"
+msgstr ""
+
+#: src/prefs.js:221
+msgid "Take Screenshot / Capture"
+msgstr ""
+
+#: src/prefs.js:222
+msgid "Copy to Clipboard"
+msgstr ""
+
+#: src/prefs.js:223
+msgid "Save As…"
+msgstr ""
+
+#: src/prefs.js:224
+msgid "Extract Text (OCR)"
+msgstr ""
+
+#: src/prefs.js:225
+msgid "Area Selection"
+msgstr ""
+
+#: src/prefs.js:226
+msgid "Screen Selection"
+msgstr ""
+
+#: src/prefs.js:227
+msgid "Window Selection"
+msgstr ""
+
+#: src/prefs.js:228
+msgid "Toggle Pointer Visibility"
+msgstr ""
+
+#: src/prefs.js:229
+msgid "Toggle Screen Recording"
+msgstr ""
+
+#: src/prefs.js:232
+msgid "Annotations"
+msgstr ""
+
+#: src/prefs.js:233
+msgid "Undo Last Stroke"
+msgstr ""
+
+#: src/prefs.js:234
+msgid "Delete Selected"
+msgstr ""
+
+#: src/prefs.js:235
+msgid "Crop Tool"
+msgstr ""
+
+#: src/prefs.js:236
+msgid "Drag Tool"
+msgstr ""
+
+#: src/prefs.js:237
+msgid "Freehand Tool"
+msgstr ""
+
+#: src/prefs.js:238
+msgid "Rectangle Tool"
+msgstr ""
+
+#: src/prefs.js:239
+msgid "Solid Rectangle Tool"
+msgstr ""
+
+#: src/prefs.js:240
+msgid "Highlighter Tool"
+msgstr ""
+
+#: src/prefs.js:241
+msgid "Arrow Tool"
+msgstr ""
+
+#: src/prefs.js:242
+msgid "Text Tool"
+msgstr ""
+
+#: src/prefs.js:243
+msgid "Number Stamp Tool"
+msgstr ""
+
+#: src/prefs.js:269
+msgid "Take a screenshot interactively"
+msgstr ""
+
+#: src/prefs.js:270
+msgid "Take a screencast interactively"
+msgstr ""
+
+#: src/prefs.js:271
+msgid "Take a screenshot of a window"
+msgstr ""
+
+#: src/prefs.js:272
+msgid "Take a screenshot"
+msgstr ""
+
+#: src/prefs.js:275
+msgid "System Keybindings"
+msgstr ""
+
+#: src/prefs.js:276
+msgid "Configurable in Settings → Keyboard."
+msgstr ""
+
+#: src/screenshotStore.js:66
+#, javascript-format
+msgid "Screenshot From %s"
+msgstr ""
+
+#: src/screenshotStore.js:87
+msgid "Screenshots"
+msgstr ""
+
+#: src/screenshotStore.js:161
+msgid "Save Screenshot As…"
+msgstr ""
+
+#: src/screenshotStore.js:240
+msgid "Screenshot taken"
+msgstr ""
+
+#: src/screenshotToast.js:150
+msgid "Copied!"
+msgstr ""
+
+#: src/tools.js:45 src/topBar.js:248
+msgid "Crop"
+msgstr ""
+
+#: src/tools.js:56
+msgid "Drag"
+msgstr ""
+
+#: src/tools.js:68
+msgid "Freehand"
+msgstr ""
+
+#: src/tools.js:88
+msgid "Rectangle"
+msgstr ""
+
+#: src/tools.js:107
+msgid "Solid Rectangle"
+msgstr ""
+
+#: src/tools.js:125
+msgid "Highlighter"
+msgstr ""
+
+#: src/tools.js:146
+msgid "Arrow"
+msgstr ""
+
+#: src/tools.js:177
+msgid "Text"
+msgstr ""
+
+#: src/tools.js:231
+msgid "Number Stamp"
+msgstr ""
+
+#: src/topBar.js:15
+msgid "White"
+msgstr ""
+
+#: src/topBar.js:16
+msgid "Black"
+msgstr ""
+
+#: src/topBar.js:17
+msgid "Red"
+msgstr ""
+
+#: src/topBar.js:18
+msgid "Orange"
+msgstr ""
+
+#: src/topBar.js:19
+msgid "Yellow"
+msgstr ""
+
+#: src/topBar.js:20
+msgid "Green"
+msgstr ""
+
+#: src/topBar.js:21
+msgid "Blue"
+msgstr ""
+
+#: src/topBar.js:22
+msgid "Purple"
+msgstr ""
+
+#: src/topBar.js:207
+msgid "Undo"
+msgstr ""
+
+#: src/topBar.js:218
+msgid "Clear all"
+msgstr ""
+
+#: src/topBar.js:248
+msgid "Pick Display"
+msgstr ""

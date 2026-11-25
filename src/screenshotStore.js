@@ -8,6 +8,7 @@ import Cairo from 'gi://cairo';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import { showScreenshotToast } from './screenshotToast.js';
+import {_} from './i18n.js';
 
 function* _suffixes() {
     yield '';
@@ -62,7 +63,7 @@ async function _writeBytesToFile(file, bytes) {
 
 async function _saveBytesToDir(dir, bytes, format) {
     const timestamp = GLib.DateTime.new_now_local().format('%Y-%m-%d %H-%M-%S');
-    const name = `Screenshot From ${timestamp}`;
+    const name = _('Screenshot From %s').replace('%s', timestamp);
 
     for (const suffix of _suffixes()) {
         const file = dir.get_child(`${name}${suffix}.${format}`);
@@ -83,7 +84,7 @@ function _saveToDiskAsync(bytes, format = 'png') {
 
     const dir = Gio.File.new_for_path(GLib.build_filenamev([
         GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES) || GLib.get_home_dir(),
-        'Screenshots',
+        _('Screenshots'),
     ]));
 
     try {
@@ -157,7 +158,7 @@ async function _pickSaveLocationViaPortal(suggestedName) {
             'SaveFile',
             new GLib.Variant('(ssa{sv})', [
                 '',
-                'Save Screenshot As…',
+                _('Save Screenshot As…'),
                 {
                     handle_token: new GLib.Variant('s', handle_token),
                     current_name: new GLib.Variant('s', suggestedName),
@@ -236,7 +237,7 @@ async function _captureWindowComposite(windowEntries, cursor) {
 
 export async function captureAndStoreScreenshot(texture, geometry, scale, cursor, compositeFn, windowComposite = null, { copy = true, save = true, externalSave = false, format = 'png', playSound = true } = {}) {
     if (playSound)
-        global.display.get_sound_player().play_from_theme('screen-capture', 'Screenshot taken', null);
+        global.display.get_sound_player().play_from_theme('screen-capture', _('Screenshot taken'), null);
 
     let finalBytes, finalPixbuf, alreadyEncoded = false;
 

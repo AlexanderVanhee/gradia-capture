@@ -5,6 +5,7 @@ import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
 import GdkPixbuf from 'gi://GdkPixbuf';
 import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import {_} from './i18n.js';
 
 const FORMAT_INFO = [
     { id: 'png',  label: 'PNG'  },
@@ -26,7 +27,7 @@ const AboutPage = GObject.registerClass(
     class AboutPage extends Adw.PreferencesPage {
         constructor(settings) {
             super({
-                title: 'Preferences',
+                title: _('Preferences'),
                 icon_name: 'org.gnome.Settings-symbolic',
             });
             this._settings = settings;
@@ -71,20 +72,20 @@ const AboutPage = GObject.registerClass(
             });
 
             const title = new Gtk.Label({
-                label: 'Support This Extension',
+                label: _('Support This Extension'),
                 halign: Gtk.Align.START,
                 css_classes: ['title-4'],
                 wrap: true
             });
 
             const subtitle = new Gtk.Label({
-                label: 'If you enjoy my work, consider donating!',
+                label: _('If you enjoy my work, consider donating!'),
                 halign: Gtk.Align.START,
                 wrap: true,
             });
 
             const button = new Gtk.LinkButton({
-                label: 'Donate',
+                label: _('Donate'),
                 uri: 'https://ko-fi.com/alexandervanhee',
                 valign: Gtk.Align.CENTER,
                 css_classes: ['pill'],
@@ -100,7 +101,7 @@ const AboutPage = GObject.registerClass(
         }
 
         _buildTextRecognitionGroup() {
-            this._ocrGroup = new Adw.PreferencesGroup({ title: 'Text Recognition' });
+            this._ocrGroup = new Adw.PreferencesGroup({ title: _('Text Recognition') });
             this.add(this._ocrGroup);
             this._ocrRow = null;
             this._refreshOcrRow();
@@ -119,11 +120,11 @@ const AboutPage = GObject.registerClass(
             }
 
             const row = new Adw.ActionRow(installed ? {
-                title: 'Gradia Installed',
-                subtitle: 'OCR text extraction is available in the screenshot UI',
+                title: _('Gradia Installed'),
+                subtitle: _('OCR text extraction is available in the screenshot UI'),
             } : {
-                title: 'Get the Gradia Flatpak',
-                subtitle: 'Install the app via Flathub to enable the OCR text extraction feature',
+                title: _('Get the Gradia Flatpak'),
+                subtitle: _('Install the app via Flathub to enable the OCR text extraction feature'),
                 activatable: true,
             });
 
@@ -142,7 +143,7 @@ const AboutPage = GObject.registerClass(
         }
 
         _buildScreenshotGroup() {
-            const group = new Adw.PreferencesGroup({ title: 'Screenshot' });
+            const group = new Adw.PreferencesGroup({ title: _('Screenshot') });
 
             const availableIds = new Set(
                 GdkPixbuf.Pixbuf.get_formats()
@@ -153,8 +154,8 @@ const AboutPage = GObject.registerClass(
             const formats = FORMAT_INFO.filter(f => availableIds.has(f.id));
 
             const formatRow = new Adw.ComboRow({
-                title: 'File Format',
-                subtitle: 'Changing this may slow down saving',
+                title: _('File Format'),
+                subtitle: _('Changing this may slow down saving'),
             });
 
             const model = new Gtk.StringList();
@@ -174,22 +175,22 @@ const AboutPage = GObject.registerClass(
             });
 
             const clearSelectionRow = new Adw.SwitchRow({
-                title: 'Disable Initial Selection',
-                subtitle: 'Hide the default or last pre-selected area when the overlay opens',
+                title: _('Disable Initial Selection'),
+                subtitle: _('Hide the default or last pre-selected area when the overlay opens'),
             });
 
             this._settings.bind('clear-selection', clearSelectionRow, 'active', Gio.SettingsBindFlags.DEFAULT);
 
             const compositeWindowRow = new Adw.SwitchRow({
-                title: 'Include Parent Windows',
-                subtitle: 'Also capture parent windows when a transient window is selected',
+                title: _('Include Parent Windows'),
+                subtitle: _('Also capture parent windows when a transient window is selected'),
             });
 
             this._settings.bind('composite-window-capture', compositeWindowRow, 'active', Gio.SettingsBindFlags.DEFAULT);
 
             const soundRow = new Adw.SwitchRow({
-                title: 'Sound',
-                subtitle: 'Play a shutter sound effect on capture',
+                title: _('Sound'),
+                subtitle: _('Play a shutter sound effect on capture'),
             });
 
             this._settings.bind('play-sound', soundRow, 'active', Gio.SettingsBindFlags.DEFAULT);
@@ -206,34 +207,34 @@ const ShortcutsPage = GObject.registerClass(
     class ShortcutsPage extends Adw.PreferencesPage {
         constructor() {
             super({
-                title: 'Shortcuts',
+                title: _('Shortcuts'),
                 icon_name: 'preferences-desktop-keyboard-shortcuts-symbolic',
             });
 
-            this._addGroup('Screenshot Mode', [
-                ['Take Screenshot / Capture',  'Return space'],
-                ['Copy to Clipboard',          '<Control>c'],
-                ['Save As…',                   '<Control>s'],
-                ['Extract Text (OCR)',         '<Control>e'],
-                ['Area Selection',             's'],
-                ['Screen Selection',           'c'],
-                ['Window Selection',           'w'],
-                ['Toggle Pointer Visibility',  'p'],
-                ['Toggle Screen Recording',    'v'],
+            this._addGroup(_('Screenshot Mode'), [
+                [_('Take Screenshot / Capture'),  'Return space'],
+                [_('Copy to Clipboard'),          '<Control>c'],
+                [_('Save As…'),                   '<Control>s'],
+                [_('Extract Text (OCR)'),         '<Control>e'],
+                [_('Area Selection'),             's'],
+                [_('Screen Selection'),           'c'],
+                [_('Window Selection'),           'w'],
+                [_('Toggle Pointer Visibility'),  'p'],
+                [_('Toggle Screen Recording'),    'v'],
             ]);
 
-            this._addGroup('Annotations', [
-                ['Undo Last Stroke',     '<Control>z'],
-                ['Delete Selected',      'Delete BackSpace'],
-                ['Crop Tool',            '1 q'],
-                ['Drag Tool',            '2 d'],
-                ['Freehand Tool',        '3 f'],
-                ['Rectangle Tool',       '4 r'],
-                ['Solid Rectangle Tool', '5 b'],
-                ['Highlighter Tool',     '6 h'],
-                ['Arrow Tool',           '7 a'],
-                ['Text Tool',            '8 t'],
-                ['Number Stamp Tool',    '9 n'],
+            this._addGroup(_('Annotations'), [
+                [_('Undo Last Stroke'),     '<Control>z'],
+                [_('Delete Selected'),      'Delete BackSpace'],
+                [_('Crop Tool'),            '1 q'],
+                [_('Drag Tool'),            '2 d'],
+                [_('Freehand Tool'),        '3 f'],
+                [_('Rectangle Tool'),       '4 r'],
+                [_('Solid Rectangle Tool'), '5 b'],
+                [_('Highlighter Tool'),     '6 h'],
+                [_('Arrow Tool'),           '7 a'],
+                [_('Text Tool'),            '8 t'],
+                [_('Number Stamp Tool'),    '9 n'],
             ]);
 
             this._addSystemKeybindingsGroup();
@@ -259,14 +260,14 @@ const ShortcutsPage = GObject.registerClass(
             });
 
             const entries = [
-                ['Take a screenshot interactively', 'show-screenshot-ui'],
-                ['Take a screencast interactively', 'show-screen-recording-ui'],
-                ['Take a screenshot of a window', 'screenshot-window'],
-                ['Take a screenshot', 'screenshot'],
+                [_('Take a screenshot interactively'), 'show-screenshot-ui'],
+                [_('Take a screencast interactively'), 'show-screen-recording-ui'],
+                [_('Take a screenshot of a window'), 'screenshot-window'],
+                [_('Take a screenshot'), 'screenshot'],
             ];
 
-            const group = new Adw.PreferencesGroup({ title: 'System Keybindings' });
-            group.set_description('Configurable in Settings → Keyboard.');
+            const group = new Adw.PreferencesGroup({ title: _('System Keybindings') });
+            group.set_description(_('Configurable in Settings → Keyboard.'));
 
             for (const [label, key] of entries) {
                 const row = new Adw.ActionRow({ title: label });

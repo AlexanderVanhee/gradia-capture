@@ -1,0 +1,247 @@
+# Gradia Capture 简体中文翻译
+# Copyright (C) 2026
+# This file is distributed under the same license as the extension.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gradia-capture\n"
+"Report-Msgid-Bugs-To: https://github.com/AlexanderVanhee/gradia-capture/issues\n"
+"POT-Creation-Date: 2026-10-19 10:00+0800\n"
+"PO-Revision-Date: 2026-10-19 10:00+0800\n"
+"Last-Translator: jssd\n"
+"Language-Team: Chinese (Simplified)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+# 截图浮层
+msgid "Drag to Make a Selection"
+msgstr "拖动以选择区域"
+
+msgid "Extract Text"
+msgstr "提取文字"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Copied!"
+msgstr "已复制！"
+
+msgid "Undo"
+msgstr "撤销"
+
+msgid "Clear all"
+msgstr "全部清除"
+
+msgid "Pick Display"
+msgstr "选择显示器"
+
+# 保存 / 通知
+msgid "Screenshot From %s"
+msgstr "截图 %s"
+
+msgid "Screenshots"
+msgstr "截图"
+
+msgid "Save Screenshot As…"
+msgstr "截图另存为…"
+
+msgid "Screenshot taken"
+msgstr "已获取截图"
+
+# 工具名
+msgid "Crop"
+msgstr "裁剪"
+
+msgid "Drag"
+msgstr "拖动"
+
+msgid "Freehand"
+msgstr "自由画笔"
+
+msgid "Rectangle"
+msgstr "矩形"
+
+msgid "Solid Rectangle"
+msgstr "实心矩形"
+
+msgid "Highlighter"
+msgstr "荧光笔"
+
+msgid "Arrow"
+msgstr "箭头"
+
+msgid "Text"
+msgstr "文字"
+
+msgid "Number Stamp"
+msgstr "数字标记"
+
+# 颜色名
+msgid "White"
+msgstr "白色"
+
+msgid "Black"
+msgstr "黑色"
+
+msgid "Red"
+msgstr "红色"
+
+msgid "Orange"
+msgstr "橙色"
+
+msgid "Yellow"
+msgstr "黄色"
+
+msgid "Green"
+msgstr "绿色"
+
+msgid "Blue"
+msgstr "蓝色"
+
+msgid "Purple"
+msgstr "紫色"
+
+# 设置窗口
+msgid "Preferences"
+msgstr "首选项"
+
+msgid "Support This Extension"
+msgstr "支持这个扩展"
+
+msgid "If you enjoy my work, consider donating!"
+msgstr "如果这个扩展对你有帮助，欢迎打赏支持！"
+
+msgid "Donate"
+msgstr "打赏"
+
+msgid "Text Recognition"
+msgstr "文字识别"
+
+msgid "Gradia Installed"
+msgstr "已安装 Gradia"
+
+msgid "OCR text extraction is available in the screenshot UI"
+msgstr "截图界面中的 OCR 文字提取功能可用"
+
+msgid "Get the Gradia Flatpak"
+msgstr "获取 Gradia Flatpak"
+
+msgid "Install the app via Flathub to enable the OCR text extraction feature"
+msgstr "从 Flathub 安装该应用以启用 OCR 文字提取功能"
+
+msgid "Screenshot"
+msgstr "截图"
+
+msgid "File Format"
+msgstr "文件格式"
+
+msgid "Changing this may slow down saving"
+msgstr "更改后保存可能变慢"
+
+msgid "Disable Initial Selection"
+msgstr "禁用初始选区"
+
+msgid "Hide the default or last pre-selected area when the overlay opens"
+msgstr "打开截图浮层时不预选默认区域或上次的区域"
+
+msgid "Include Parent Windows"
+msgstr "包含父窗口"
+
+msgid "Also capture parent windows when a transient window is selected"
+msgstr "选中临时窗口时一并截取其父窗口"
+
+msgid "Sound"
+msgstr "声音"
+
+msgid "Play a shutter sound effect on capture"
+msgstr "截图时播放快门音效"
+
+msgid "Shortcuts"
+msgstr "快捷键"
+
+msgid "Screenshot Mode"
+msgstr "截图模式"
+
+msgid "Take Screenshot / Capture"
+msgstr "截图 / 捕获"
+
+msgid "Copy to Clipboard"
+msgstr "复制到剪贴板"
+
+msgid "Save As…"
+msgstr "另存为…"
+
+msgid "Extract Text (OCR)"
+msgstr "提取文字（OCR）"
+
+msgid "Area Selection"
+msgstr "区域选择"
+
+msgid "Screen Selection"
+msgstr "全屏选择"
+
+msgid "Window Selection"
+msgstr "窗口选择"
+
+msgid "Toggle Pointer Visibility"
+msgstr "切换指针可见性"
+
+msgid "Toggle Screen Recording"
+msgstr "切换屏幕录制"
+
+msgid "Annotations"
+msgstr "标注"
+
+msgid "Undo Last Stroke"
+msgstr "撤销上一笔"
+
+msgid "Delete Selected"
+msgstr "删除所选"
+
+msgid "Crop Tool"
+msgstr "裁剪工具"
+
+msgid "Drag Tool"
+msgstr "拖动工具"
+
+msgid "Freehand Tool"
+msgstr "自由画笔工具"
+
+msgid "Rectangle Tool"
+msgstr "矩形工具"
+
+msgid "Solid Rectangle Tool"
+msgstr "实心矩形工具"
+
+msgid "Highlighter Tool"
+msgstr "荧光笔工具"
+
+msgid "Arrow Tool"
+msgstr "箭头工具"
+
+msgid "Text Tool"
+msgstr "文字工具"
+
+msgid "Number Stamp Tool"
+msgstr "数字标记工具"
+
+msgid "Take a screenshot interactively"
+msgstr "交互式截图"
+
+msgid "Take a screencast interactively"
+msgstr "交互式录屏"
+
+msgid "Take a screenshot of a window"
+msgstr "截取窗口截图"
+
+msgid "Take a screenshot"
+msgstr "截取屏幕截图"
+
+msgid "System Keybindings"
+msgstr "系统快捷键"
+
+msgid "Configurable in Settings → Keyboard."
+msgstr "可在「设置 → 键盘」中配置。"
